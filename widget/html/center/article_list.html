@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>通知公告</title>
+		<link rel="stylesheet" href="../../css/api.css">
+		<link rel="stylesheet" href="../../css/public.css">
+		<style media="screen">
+			body,
+			html {
+				width: 100%;
+				height: 100%;
+				background-color: #F0F0F4;
+			}
+
+			.status {
+				height: 10px;
+				width: 10px;
+				border-radius: 70px;
+				background: #E32416;
+				margin-right: 10px;
+				box-sizing: border-box;
+			}
+
+			.article {
+				display: flex;
+				flex-flow: row;
+				justify-content: space-between;
+				background-color: #FFFFFF;
+				border-bottom: solid 1px #F0F0F4;
+				padding: 25px 20px;
+				align-items: center;
+			}
+
+			.article-title {
+				display: flex;
+				flex-flow: row;
+				align-items: center;
+				font-size: 16px;
+				color: #222222;
+				margin-bottom: 8px;
+				font-weight: 600;
+			}
+
+			.article-title .title-name {
+				font-size: 16px;
+				color: #222222;
+				font-weight: bold;
+			}
+
+			.article-user {
+				padding-left: 20px;
+				font-size: 14px;
+				color: #666666;
+				margin-top: 8px;
+			}
+
+			#article-author {
+				width: 120px;
+			}
+			.article .iconfont{font-size:15px}
+			.empty img {
+				display: block;
+				margin: 20px auto;
+				width: 100px;
+				margin-top: 30px
+			}
+			
+			.empty div {
+				color: #8A8A8A;
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body id="article_list">
+
+		<!--<div id="article">
+			<div class="">
+				<div id="" class="article-title">
+					<div class="status"></div>
+					<div class="title-name">
+						通知公告标题通知公告标题通知公告标题
+					</div>
+				</div>
+				<div id="" class="article-user">
+					<span id="article-author" class="">
+						发布人：张某某
+					</span>
+					<span id="article-date" class="">
+						2019-04-04
+					</span>
+				</div>
+			</div>
+			<div class="">
+				<img src="../../image/next.png" width="20"/>
+			</div>
+		</div>-->
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery.min.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+
+			listenCloseAjax();
+			
+			var uid = JSON.parse(localStorage.getItem("userinfo")).uid
+			var param = {
+				uid: uid,
+				type: 'done',
+				start: 0,
+				length: 50
+			};
+			var empty_tpl='<div class="empty"><img src="../../image/noContent_yet.png" alt=""><div>暂无通知公告</div></div>';
+			empty_tpl=$(empty_tpl);
+			var article_list = '<div class="article" data-id="">' +
+				'<div class="">' +
+				'<div id="" class="article-title">' +
+				'<div class="status"></div>' +
+				'<div class="title-name">' +
+				'</div>' +
+				'</div>' +
+				'<div id="" class="article-user">' +
+				'<span id="article-author">' +
+				'</span>' +
+				'<span id="article-date">' +
+				'</span>' +
+				'</div>' +
+				'</div>' +
+				'<div class="">' +
+				'<i class="iconfont iconxiangyoujiantou"></i>' +
+				'</div>' +
+				'</div>'
+			article_list = $(article_list)
+			$.get(host + "mobile/article/Artlist", param, function(res) {
+				//				console.log(JSON.stringify(res.data.length))
+				if(res.data.length == 0) {
+					$("#article_list").append(empty_tpl);
+					return false;
+				}
+				res.data.forEach(function(value, index, array) {
+					//					console.log(JSON.stringify(value))
+					var article = article_list.clone();
+					article.attr("data-id", value.articleid)
+					article.find(".title-name").text(value.subject);
+					article.find("#article-author").text("发布人：" + value.author);
+					//					var date=getNowFormatDate(value.addtime);
+					//						date=date.split(" ")[0];
+					if(value.readStatus >= 0) {
+						article.find(".status").css("visibility", "hidden");
+					}
+					var date=getNowFormatDate(value.addtime);
+						date=date.split(" ")[0];
+					article.find("#article-date").text(date);
+					$("#article_list").append(article);
+				})
+			})
+			$("#article_list").on("click", ".article", function() {
+				$(this).find(".status").css("visibility", "hidden");
+				var id=$(this).attr("data-id")
+				api.openTabLayout({
+					name: 'article_detail',
+					url: 'widget://html/center/article_detail.html',
+					title: '公告详情',
+					hideNavigationBar: false,
+					navigationBar: {
+						background: '#E32416',
+						color: '#fff',
+						leftButtons: [{
+							iconPath: 'widget://image/leftArrow.png'
+						}]
+					},
+					pageParam: {
+				        articleId:id
+				    }
+				});
+			})
+		};
+	</script>
+
+</html>

@@ -1,0 +1,312 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>邮箱详情</title>
+		<link rel="stylesheet" href="../../css/api.css">
+		<link rel="stylesheet" href="../../css/PUBLIC.css">
+		<style media="screen">
+			body,
+			html {
+				width: 100%;
+				height: 100%;
+				background-color: #F0F0F4;
+			}
+			.content {
+				margin-top: 10px;
+				background-color: #FFFFFF;
+				padding: 5px 20px;
+				box-sizing: border-box;
+				overflow: hidden;
+
+			}
+
+			.mail-content {
+				border: 1px solid #F0F0F4;
+				min-height: 200px;
+				padding: 8px;
+				width:100%;
+				box-sizing: border-box;
+				font-size:15px;
+				margin-bottom:80px
+			}
+			.content_title{
+				margin-top:10px;
+				margin-bottom:10px
+			}
+			.line-box{display: flex;min-height:50px;background:#fff;border-bottom:1px solid #F0F0F4;align-items: center;}
+			.line-title{width:30%;box-sizing: border-box;padding-left: 20px;color:#666}
+			.line-content{width:70%;box-sizing: border-box;padding-right:20px;padding-top:5px;padding-bottom: 5px}
+			.fileList{width:100%;background:#fff}
+			.file_item{width:100%;height:50px;display: flex;justify-content: space-between;align-items: center;box-sizing: border-box;padding-left:20px;padding-right:20px;border-bottom:1px solid #F0F0F4}
+			.file_name{width:65%;font-size:15px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+			.delete_file{font-size: 15px;color:#E32416}
+			.look_file{font-size:14px;width:40px;text-align: center;color:#E32416}
+			.mail_bottom_control{width:100%;height:55px;background:#fff;box-shadow:0px 0px 10px rgba(0,0,0,0.2);position: fixed;bottom:0;left:0;z-index:10;display: flex;justify-content: space-around;align-items: center;}
+			.mail_bottom_control img{width:20px;}
+			.reply,.forward,.delete{text-align: center;font-size:12px}
+			.mail_bottom_control > div{width:100px;padding-top:5px;padding-bottom:5px}
+			.mail_bottom_control > div:active{background:#f0f0f4}
+		</style>
+	</head>
+
+	<body>
+		<div class="mail_info">
+			<div class="line-box">
+					<div class="line-title">
+						主题
+					</div>
+					<div class="line-content subject">
+
+					</div>
+			</div>
+			<div class="line-box">
+					<div class="line-title">
+						发件人
+					</div>
+					<div class="line-content send_people">
+
+					</div>
+			</div>
+			<div class="line-box">
+					<div class="line-title">
+						收件人
+					</div>
+					<div class="line-content receiver_people">
+
+					</div>
+			</div>
+			<div class="line-box">
+					<div class="line-title">
+						抄送人
+					</div>
+					<div class="line-content copy_people">
+
+					</div>
+			</div>
+			<div class="line-box">
+					<div class="line-title">
+						密送人
+					</div>
+					<div class="line-content secret_people">
+
+					</div>
+			</div>
+			<div class="line-box">
+					<div class="line-title">
+						发送时间
+					</div>
+					<div class="line-content send_time">
+
+					</div>
+			</div>
+			<div class="line-box">
+					<div class="line-title">
+						附件
+					</div>
+					<div class="line-content">
+
+					</div>
+			</div>
+			<div class="fileList">
+
+			</div>
+			<div class="content">
+				<div class="content_title">
+					邮件内容
+				</div>
+				<div class="mail-content" id="mail_content"></div>
+			</div>
+		</div>
+		<div class="mail_bottom_control">
+				<div class="reply">
+					<img src="../../image/reply.png" alt=""><br/>
+					回复
+				</div>
+				<div class="forward">
+					<img src="../../image/forward.png" alt=""><br/>
+					转发
+				</div>
+				<div class="delete">
+					<img src="../../image/delete.png" alt=""><br/>
+					删除
+				</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery.min.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			listenCloseAjax();
+
+			var param=api.pageParam;
+			var fid="";
+			var getUrl = host_+"/appapi.php?r=mobile/mail/show&id="+param.id+"&op="+param.type;
+
+			$(".fileList").on("click",".look_file",function(){
+				var url=$(this).parent().attr("data-url");
+				var name=$(this).parent().attr("data-filename");
+
+				if(url == undefined){
+					api.toast({
+					    msg: '暂不支持音视频播放，请使用电脑端打开',
+					    duration: 2000,
+					    location: 'bottom'
+					});
+					return false;
+				}
+				if(url.indexOf("http://") == -1 ){
+					url=host_+url;
+
+				}
+				openFile(url,name);
+			})
+			$(".delete").click(function(){
+				var tipMsg="您确认要删除该邮件吗？";
+//				console.log(JSON.stringify(param));
+				if(param.type=="send"||param.type=="draft")
+				{
+						tipMsg="选中邮件将会彻底删除，无法恢复，确认吗？"
+				}
+				if(confirm(tipMsg)){
+					var deleteUrl=host_+"/appapi.php?r=email/api/mark"+"&op=del";
+					//删除已发送类型的邮件
+					if(param.type=="send")
+					{
+							deleteUrl=host_+"/appapi.php?r=email/api/mark&op=delFromSend"+"&emailids="+param.id;
+					}
+					else if(param.type=="del")//删除回收站的邮件
+					{
+							deleteUrl=host_+"/appapi.php?r=email/api/cpDel"+"&emailids="+param.id;
+					}
+//					console.log(param.type)
+//					console.log(deleteUrl);
+					$.post(deleteUrl,{fid:fid,emailids:param.id,archiveid:"0"},function(data){
+//						console.log(JSON.stringify(data))
+						if(data.isSuccess)
+						{
+							api.toast({msg:"删除成功",duration:500});
+							api.sendEvent({
+								name: 'refresh_mail',
+							});
+							setTimeout(function()
+							{
+									api.closeWin();
+							},500);
+						}
+						else
+						{
+							api.toast({msg:data.errorMsg,duration:500});
+						}
+					})
+				}
+			})
+
+			$(".reply").click(function(){
+				api.openTabLayout({
+						name: 'mailAdd',
+						url: 'widget://html/workbench/mail_add.html',
+						title: '写邮件',
+						hideNavigationBar: false,
+						pageParam:{type:param.type,id:param.id,controlType:"reply"},
+						navigationBar: {
+							background: '#E32416',
+							color: '#fff',
+							leftButtons: [{
+									iconPath: 'widget://image/leftArrow.png'
+							}],
+							rightButtons:
+							[{
+								text:"发送",
+								color:"#fff",
+								fontSize:15
+							}]
+						}
+				});
+			})
+			$(".forward").click(function(){
+				api.openTabLayout({
+					name: 'mailAdd',
+					url: 'widget://html/workbench/mail_add.html',
+					title: '写邮件',
+					hideNavigationBar: false,
+					pageParam:{type:param.type,id:param.id,controlType:"forward"},
+					navigationBar: {
+						background: '#E32416',
+						color: '#fff',
+						leftButtons: [{
+								iconPath: 'widget://image/leftArrow.png'
+						}],
+						rightButtons:
+						[{
+								text:"发送",
+								color:"#fff",
+								fontSize:15
+						}]
+					}
+				});
+			})
+			var emailData={};
+			var file_tpl='<div class="file_item"><img src="" alt="" width="20px"><div class="file_name"></div><div class="look_file">查看</div></div>';
+			file_tpl=$(file_tpl);
+
+			$.get(getUrl,{},function(data){
+
+				if(data.isSuccess){
+					emailData=data;
+					var email=data.data.email;
+					fid=email.fid;
+					$(".subject").text(email.subject);
+					$(".send_people").text(email.fromName)
+					var receiver_people='';
+					for(var i in data.data.toUsers) {
+					     receiver_people=receiver_people+data.data.toUsers[i]+","
+					}
+					receiver_people = receiver_people.substr(0,receiver_people.length-1);
+					$(".receiver_people").text(receiver_people)
+					var copy_people='';
+					for(var i in data.data.copyToUsers) {
+					     copy_people=copy_people+data.data.copyToUsers[i]+","
+					}
+					copy_people = copy_people.substr(0,copy_people.length-1);
+					$(".copy_people").text(copy_people)
+					var secret_people='';
+					for(var i in data.data.secrettoids) {
+					     secret_people=secret_people+data.data.secrettoids[i]+","
+					}
+					secret_people = secret_people.substr(0,secret_people.length-1);
+					$(".secret_people").text(secret_people)
+					$(".send_time").text(email.dateTime)
+					if(data.data.hasOwnProperty("attach")){
+						for(var i in data.data.attach){
+							var dom=file_tpl.clone();
+							dom.find("img").attr("src",host_+data.data.attach[i].iconbig)
+							dom.find(".file_name").text(data.data.attach[i].filename)
+							dom.attr("data-url",data.data.attach[i].officereadurl).attr("data-filename",data.data.attach[i].filename).attr("data-aid",data.data.attach[i].aid)
+							$(".fileList").append(dom)
+						}
+					}
+					$("#mail_content").html(email.content);
+				}else{
+					api.toast({
+							msg:"获取失败",
+							duration:1000
+					});
+					setTimeout(function()
+					{
+							api.closeWin();
+					},1000)
+				}
+			})
+
+
+
+
+		};
+	</script>
+
+</html>

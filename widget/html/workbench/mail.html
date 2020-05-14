@@ -1,0 +1,255 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>我的邮箱</title>
+		<link rel="stylesheet" href="../../css/api.css">
+		<link rel="stylesheet" href="../../css/PUBLIC.css">
+		<style media="screen">
+			body,
+			html {
+				width: 100%;
+				height: 100%;
+				background-color: #F0F0F4;
+			}
+			#mail{
+				padding: 15px;
+			}
+			.mail-box {
+				display: flex;
+				flex-flow: row;
+				justify-content: space-between;
+			}
+
+			.mail {
+				display: flex;
+				flex-flow: row;
+				justify-content: space-between;
+			}
+
+			.mail>div {
+				width: 100%;
+				line-height: 0;
+				position: relative;
+			}
+
+			.mail-zhanwei {
+				width: 100%;
+				height: 0;
+				padding-bottom: 100%;
+			}
+
+			.mail-box {
+				background-color: #FFFFFF;
+				color: #555555;
+				border: 1px #f5f5f5 solid;
+				border-radius: 5px ;
+			}
+
+			.mail-content {
+				position: absolute;
+				top: 0;
+				height: 90px;
+				width: 70px;
+				line-height: normal;
+				display: flex;
+				flex-flow: column;
+				align-items: center;
+				margin: auto auto;
+				left: 0;
+				top: 0;
+				right: 0;
+				bottom: 0;
+			}
+
+			.mail-content div {
+				margin-top: 10px;
+			}
+			.sendEmail{
+				width:200px;
+				height:50px;
+				background-color:#E32416;
+				display: block;
+				border-radius:50px;
+				margin:30px auto;
+				text-align: center;
+				line-height: 50px;
+				color:#fff;
+			}
+
+		</style>
+	</head>
+
+	<body>
+		<div id="mail">
+			<div class="mail">
+				<div class="mail-box" id="inbox">
+					<div class="mail-zhanwei" style=""></div>
+					<div class="mail-content">
+						<img src="../../image/mail1.png" width="70" height="70"/>
+						<div class="">
+							收件箱
+						</div>
+					</div>
+				</div>
+				<div class="mail-box" id="draft">
+					<div class="mail-zhanwei" style=""></div>
+					<div class="mail-content">
+						<img src="../../image/mail2.png" width="70" height="70"/>
+						<div class="">
+							草稿箱
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="mail">
+				<div class="mail-box" id="send">
+					<div class="mail-zhanwei" style=""></div>
+					<div class="mail-content">
+						<img src="../../image/mail3.png" width="70" height="70"/>
+						<div class="">
+							已发送
+						</div>
+					</div>
+				</div>
+				<div class="mail-box" id="delete">
+					<div class="mail-zhanwei" style=""></div>
+					<div class="mail-content">
+						<img src="../../image/mail4.png" width="70" height="70"/>
+						<div class="">
+							已删除
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div name="button" class="sendEmail">写邮件</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery.min.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			// api.addEventListener({
+			// 	name: 'navitembtn'
+			// }, function(ret, err) {
+      //   if(ret.type=="left"){
+      //     api.closeWin();
+      //   }else{
+      //       api.openTabLayout({
+      //         name: 'mailAdd',
+      //         url: 'widget://html/workbench/mail_add.html',
+      //         title: '写邮件',
+      //         hideNavigationBar: false,
+			// 				pageParam:{type:"add"},
+      //         navigationBar: {
+      //             background: '#E32416',
+      //             color: '#fff',
+      //             leftButtons: [{
+      //                 iconPath: 'widget://image/leftArrow.png'
+      //             }],
+			// 						rightButtons:
+			// 				    [{
+			// 				        text:"发送",
+			// 				        color:"#fff",
+			// 				        fontSize:15
+			// 				    }]
+      //         }
+      //       });
+      //   }
+			//
+			// });
+			listenCloseAjax();
+				$(".sendEmail").click(function(){
+					api.openTabLayout({
+						name: 'mailAdd',
+						url: 'widget://html/workbench/mail_add.html',
+						title: '写邮件',
+						hideNavigationBar: false,
+						pageParam:{type:"add",controlType:"add"},
+						navigationBar: {
+								background: '#E32416',
+								color: '#fff',
+								leftButtons: [{
+										iconPath: 'widget://image/leftArrow.png'
+								}],
+								rightButtons:
+								[{
+										text:"发送",
+										color:"#fff",
+										fontSize:15
+								}]
+						}
+					});
+				})
+    	  $("#inbox").click(function(){
+            api.openTabLayout({
+    				    name: 'mailInbox',
+    				    url: 'widget://html/workbench/mail_list.html',
+    				    title: '收件箱',
+    				    hideNavigationBar: false,
+                		pageParam:{type:"inbox"},
+    				    navigationBar: {
+    				        background: '#E32416',
+    				        color: '#fff',
+    				        leftButtons: [{
+    				            iconPath: 'widget://image/leftArrow.png'
+    				        }]
+    				    }
+    				});
+        })
+        $("#draft").click(function(){
+          api.openTabLayout({
+              name: 'mailDraft',
+              url: 'widget://html/workbench/mail_list.html',
+              title: '草稿箱',
+              hideNavigationBar: false,
+              pageParam:{type:"draft"},
+              navigationBar: {
+                  background: '#E32416',
+                  color: '#fff',
+                  leftButtons: [{
+                      iconPath: 'widget://image/leftArrow.png'
+                  }]
+              }
+          });
+      })
+      $("#send").click(function(){
+        api.openTabLayout({
+            name: 'mailHassend',
+            url: 'widget://html/workbench/mail_list.html',
+            title: '已发送',
+            hideNavigationBar: false,
+            pageParam:{type:"send"},
+            navigationBar: {
+                background: '#E32416',
+                color: '#fff',
+                leftButtons: [{
+                    iconPath: 'widget://image/leftArrow.png'
+                }]
+            }
+        });
+    })
+    $("#delete").click(function(){
+      api.openTabLayout({
+          name: 'mailDel',
+          url: 'widget://html/workbench/mail_list.html',
+          title: '已删除',
+          hideNavigationBar: false,
+          pageParam:{type:"del"},
+          navigationBar: {
+              background: '#E32416',
+              color: '#fff',
+              leftButtons: [{
+                  iconPath: 'widget://image/leftArrow.png'
+              }]
+          }
+      });
+  })
+		};
+	</script>
+
+</html>

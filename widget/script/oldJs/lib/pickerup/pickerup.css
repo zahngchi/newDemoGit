@@ -1,0 +1,43 @@
+.jq-picker-content {
+    width: 100%;
+    min-height: 5rem;
+    background-color: white;
+    border-top:1px solid rgba(218, 165, 32, 0.49);
+    position:fixed;
+    bottom:0;
+    left:0;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    -ms-transition: all 0.5s;
+    -o-transition: all 0.5s;
+    transition: all 0.5s;
+    display:none;
+}
+.jq-picker-content .jq-picker-close,.jq-picker-content .jq-picker-ok
+{
+    display:inline-block;
+    color:dodgerblue;
+    width:30px;
+    height:30px;
+    text-align: center;
+    line-height: 30px;
+    border-radius:50%;
+    border:1px solid dodgerblue;
+    box-sizing: border-box;
+    font-size:24px;
+    margin:10px;
+}
+.jq-picker-close
+{
+    float:left;
+}
+.jq-picker-ok
+{
+    float:right;
+}
+.jq-picker-tpl
+{
+    width:90%;
+    margin:50px auto 10px;
+    min-height:5rem;
+}

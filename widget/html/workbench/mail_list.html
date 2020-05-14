@@ -1,0 +1,296 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>我的邮箱</title>
+		<link rel="stylesheet" href="../../css/api.css">
+		<link rel="stylesheet" href="../../css/PUBLIC.css">
+		<style media="screen">
+			body,
+			html {
+				width: 100%;
+				height: 100%;
+				background-color: #F0F0F4;
+			}
+
+			.search {
+				display: flex;
+				flex-flow: row;
+				height: 60px;
+				box-sizing: border-box;
+				padding: 10px 15px 10px 15px;
+			}
+
+			.search input {
+				background-color: #FFFFFF;
+				border-radius: 6px;
+				height: 35px;
+				width: 100%;
+				padding: 2px 5px;
+				text-indent: 10px
+			}
+
+			.search a {
+				height: 35px;
+				line-height: 35px;
+				text-align: center;
+				padding-left: 15px;
+				display: none;
+			}
+
+			.mail_list {
+				width: 100%;
+				height: calc(100% - 60px);
+				box-sizing: border-box;
+				overflow-x: scroll;
+			}
+
+			.list_item {
+				width: 100%;
+				height: 90px;
+				background: #fff;
+				position: relative;
+				border-bottom: 1px solid #F0F0F4
+			}
+
+			.item_title {
+				position: absolute;
+				left: 15px;
+				top: 15px;
+				font-size: 16px;
+				font-weight: bold;
+				color: #333333
+			}
+
+			.item_author {
+				position: absolute;
+				left: 15px;
+				bottom: 16px;
+				font-size: 14px;
+				color: #666666
+			}
+
+			.item_datetime {
+				font-size: 12px;
+				color: #666666;
+				position: absolute;
+				right: 15px;
+				bottom: 15px
+			}
+
+			.item_arrow {
+				position: absolute;
+				right: 15px;
+				top: 15px;
+				font-size: 17px;
+				color: #323233
+			}
+
+			.empty {
+				width: 100%
+			}
+
+			.empty img {
+				display: block;
+				margin: 20px auto;
+				width: 100px;
+				margin-top: 30px
+			}
+
+			.empty div {
+				color: #8A8A8A;
+				text-align: center;
+			}
+
+			.loading {
+				width: 100%;
+				height: 40px;
+				text-align: center;
+				position: relative;
+				font-size: 15px;
+				box-sizing: border-box;
+				line-height: 40px;
+				color: #666666
+			}
+
+			.loading .loadingicon {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				margin: auto auto;
+				left: 38%;
+				height: 15px;
+				width: 15px;
+				line-height:
+			}
+
+			.loading .iconfont {
+				animation: xuanzhuan 1s linear infinite;
+				-moz-animation: xuanzhuan 1s linear infinite;
+				/* Firefox */
+				-webkit-animation: xuanzhuan 1s linear infinite;
+				/* Safari 和 Chrome */
+				-o-animation: xuanzhuan 1s linear infinite;
+				position: absolute;
+				font-size: 15px;
+				left: 0;
+				line-height: normal;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="search">
+			<input type="text" name="" value="" placeholder="请输入关键字" id="search" />
+			<a id="search_button">搜索</a>
+		</div>
+		<div class="mail_list" data-paginate="1">
+
+			<div class="loading">
+				<div class="loadingicon"><i class="iconfont iconjiazaizhong"></i></div>&nbsp;<span>加载中</span></div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery.min.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			listenCloseAjax();
+			//监听操作后刷新列表
+			api.addEventListener({
+				name: "refresh_mail"
+			}, function(ret) {
+				location.href = location.href
+			});
+			var param = api.pageParam;
+
+			var search_text = "";
+			//			点击搜索按钮
+			$("#search_button").click(function() {
+				$("#search_button").css("display", "none")
+				$("#search").css("width", "100%")
+				$(".search").css("padding-right", "15px")
+				search_text = $("#search").val()
+				$(".mail_list .list_item").remove();
+				getList(1)
+			})
+			//			点击输入框
+			$("#search").click(function() {
+				$("#search_button").css("display", "block")
+				$("#search").css("width", "80%")
+				$(".search").css("padding-right", "0px")
+			})
+
+			$(".mail_list").scroll(function() {
+				var scrollTop = $(this).scrollTop();
+				var scrollHeight = $(this)[0].scrollHeight;
+				var height = $(this).height();
+				if((scrollTop + height + 5) >= scrollHeight) {
+					var paginate = $(this).attr("data-paginate");
+					getList(parseInt(paginate) + 1, false)
+					$(this).attr("data-paginate", parseInt(paginate) + 1);
+				}
+			});
+
+			$(".mail_list").on("click", ".list_item", function() {
+				var id = $(this).attr("data-id");
+				var bodyid = $(this).attr("data-bodyid");
+				if(param.type == "draft") {
+					api.openTabLayout({
+						name: 'mailAdd',
+						url: 'widget://html/workbench/mail_add.html',
+						title: '写邮件',
+						hideNavigationBar: false,
+						pageParam: {
+							type: param.type,
+							id: id,
+							controlType:"draft"
+						},
+						navigationBar: {
+							background: '#E32416',
+							color: '#fff',
+							leftButtons: [{
+								iconPath: 'widget://image/leftArrow.png'
+							}],
+							rightButtons: [{
+								text: "发送",
+								color: "#fff",
+								fontSize: 15
+							}]
+						}
+					});
+				} else {
+					api.openTabLayout({
+						name: 'mailDetail',
+						url: 'widget://html/workbench/mail_detail.html',
+						title: '邮件详情',
+						hideNavigationBar: false,
+						pageParam: {
+							type: param.type,
+							id: id
+						},
+						navigationBar: {
+							background: '#E32416',
+							color: '#fff',
+							leftButtons: [{
+								iconPath: 'widget://image/leftArrow.png'
+							}]
+						}
+					});
+				}
+			})
+
+			var empty_tpl = '<div class="empty"><img src="../../image/noNewsyet.png" alt=""><div>暂无邮件</div></div>';
+			empty_tpl = $(empty_tpl);
+			var mail_tpl = '<div class="list_item"><div class="item_title"></div><div class="item_author"></div><div class="item_datetime"></div><div class="item_arrow iconfont iconxiangyoujiantou"></div></div>';
+			mail_tpl = $(mail_tpl);
+			//获取邮件数据
+			function getList(page) {
+				var start = 0;
+				var length = 10;
+				start = (page * length) - length;
+				$(".mail_list").attr("data-paginate", page);
+
+				var url = host + "mobile/mail/index" + "&type=" + param.type + "&sort=all&length=" + length + "&start=" + start;
+				if(search_text !== "") {
+					url += "&search=" + search_text;
+				}
+				$.get(url, {}, function(ret, err) {
+					var list_child = $(".mail_list .list_item").length;
+					if(ret.data.length < 1 && list_child >= 10){
+						$(".mail_list").find(".loading span").text("没有更多数据了");
+						return false;
+					}
+					if(ret.data.length < 1 && list_child < 1) {
+						// $(".mail_list").append(empty_tpl);
+						// $(".mail_list").find(".loading").remove();
+						$(".mail_list").find(".empty").remove();
+						$(".mail_list").append(empty_tpl.clone());
+						$(".mail_list").find(".loading").hide();
+					} else {
+						ret.data.forEach(function(value, index, array) {
+							var dom = mail_tpl.clone();
+							dom.attr("data-id", value.webid)
+							dom.find(".item_title").text(value.subject);
+							dom.find(".item_author").text(value.fromuser);
+							dom.find(".item_datetime").text(value.sendtime);
+							$(".mail_list .loading").before(dom);
+
+						})
+					}
+					if(ret.data.length < 1 || (start == 0 && ret.data.length < 10)) {
+						// $(".mail_list").find(".loading").remove();
+						$(".mail_list").find(".loading span").text("没有更多数据了");
+					}
+				})
+			};
+
+			getList(1, false)
+
+		};
+	</script>
+
+</html>

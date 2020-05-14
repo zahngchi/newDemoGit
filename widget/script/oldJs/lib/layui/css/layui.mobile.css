@@ -1,0 +1,91 @@
+body,html
+{
+    width:100%;
+    height:100%;
+}
+body
+{
+    background-image:url(../../../../image/usercenter_bg.png);
+    background-size:cover;
+    background-position:center;
+}
+.layui-layer
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width:100% !important;
+    height:100% !important;
+    top:0 !important;
+    left:0 !important;
+}
+.layui-layer .layim-chat
+{
+    width:100% !important;
+}
+
+.layui-layer .layim-face-list
+{
+    width:100% !important;
+}
+
+.layui-layer .layim-list-friend
+{
+    overflow-y:auto !important;
+}
+
+.layui-layer .layui-layer-ico
+{
+    height:35px !important;
+}
+
+#layui-layim,#layui-layim .layui-layim-main
+{
+    height:100% !important;
+}
+#layui-layim .layui-layim-main
+{
+    display: -webkit-box!important;	display: -webkit-flex!important;	display: flex!important;
+    -webkit-box-orient: vertical;-webkit-flex-flow: column;flex-flow: column;
+
+}
+#layui-layim .layui-layim-main .layim-tab-content
+{
+    height:auto !important;
+    -webkit-box-flex: 1;     -webkit-flex: 1;    flex: 1;
+}
+
+#layui-layim .layui-layim-search
+{
+    bottom:20px !important;
+}
+#layui-layim  .layui-layim-tool
+{
+    padding:8px 20px !important;
+}
+
+.layui-layer-content,.layui-layer-content .layim-chat-list,.layui-layer-content .layim-chat
+{
+    height:100% !important;
+}
+.layim-chat
+{
+    display: -webkit-box!important;	display: -webkit-flex!important;	display: flex!important;
+    -webkit-box-orient: vertical;-webkit-flex-flow: column;flex-flow: column;
+}
+.layim-chat .layim-chat-title
+{
+    position:relative;
+    top:0 !important;
+    padding:10px;
+}
+.layui-layim-chat .layui-layer-title
+{
+    height:0 !important;
+    line-height: 0 !important;
+}
+.layui-layim-chat .layim-chat-main
+{
+    height:auto !important;
+    -webkit-box-flex: 1;     -webkit-flex: 1;    flex: 1;
+}

@@ -1,0 +1,2785 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/oldCss/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/oldCss/style.css" />
+		<link rel="stylesheet" href="../../css/oldCss/sm.css">
+		<link rel="stylesheet" href="../../css/oldCss/sm-extend.css">
+		<link rel="stylesheet" href="../../css/oldCss/add-css.css">
+		<link rel="stylesheet" href="../../css/oldCss/userSelect.css">
+		<link rel="stylesheet" href="../../css/oldCss/font-face.css">
+		<link rel="stylesheet" href="../../css/oldCss/workflow.css">
+		<link rel="stylesheet" href="../../script/oldJs/lib/pullToRefresh/pullToRefresh.css">
+		<link rel="stylesheet" href="../../script/oldJs/lib/pop-up/popup.css">
+		<link rel="stylesheet" href="../../script/oldJs/TimeTree/timeTree.css">
+		<style>
+			.btn-upload-new {
+				padding: 0.3rem 0.75rem;
+				text-align: center;
+				background-color: #E32416;
+				color: white;
+			}
+
+			.pop-meeting-anpai .item-content {
+				margin: 0.3rem auto;
+			}
+
+			.pop-meeting-anpai.list-block .item-input {
+				margin: 0 auto !important;
+			}
+
+			body {
+				background: #F0F0F4;
+			}
+		</style>
+	</head>
+
+	<body class="overflow-y">
+		<header class="bar bar-nav top-fixed">
+			<a class="icon pull-left backbtn" href="javascript:;" onclick="closeWin()"></a>
+			<h1 class='title' onclick="test()">工作办理</h1>
+		</header>
+		<div class="buttons-row fix-header-top">
+			<a href="#tab1-1" class="tab-link button active">工作表单</a>
+			<!--<a href="#tab1-2" class="tab-link button">工作关联</a>-->
+			<a href="#tab1-3" class="tab-link button">办理步骤</a>
+		</div>
+		<div class="content refresh-content">
+			<div class="tabs margin-t-tab">
+				<div class='tab active' id='tab1-1'>
+					<div class="list-block">
+						<div id="cardContent" class="hidden" style="overflow-x:hidden;">
+							<form id="form_data">
+								<div class="card" style="margin-top:0px;border-top:1px solid #E3E5E5;">
+									<div class="card-header" id="title">
+									</div>
+								</div>
+								<div id="content">
+									<!--表单内容-->
+
+								</div>
+							</form>
+						</div>
+					</div>
+
+				</div>
+				<div class='tab' id='tab1-2'>
+					<div class="list-block padding-t-5">
+						<div class="card">
+							<div class="card-header">
+								<span>选择关联工作</span>
+								<span class="fa fa-plus" onclick="selectCheckDoc()"></span>
+							</div>
+							<div class="card-content" id="selected-related-content">
+
+								<div style="width:100%;height:10rem;text-align:center">
+									<img style="display:inline-block;height:30%;margin-top:3rem;" src="../../image/noContent_yet.png">
+									<br>
+									<span>暂没内容</span>
+								</div>
+							</div>
+							<div class="card-footer">
+								<div style="width:100%;">
+									<div class="btn-remove pull-right" onclick="removeCheckDocItem()">
+										<span class="icon icon-remove"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="card">
+							<div class="card-header">
+								<span>选择关联审批业务</span>
+								<span class="fa fa-plus" onclick="selectCxsDoc()"></span>
+							</div>
+							<div class="card-content" id="selected-cxs-content">
+								<div style="width:100%;height:10rem;text-align:center">
+									<img style="display:inline-block;height:30%;margin-top:3rem;" src="../../image/noContent_yet.png">
+									<br>
+									<span>暂没内容</span>
+								</div>
+							</div>
+							<div class="card-footer">
+								<div style="width:100%;">
+									<div class="btn-remove pull-right" onclick="removeCxsItem()">
+										<span class="icon icon-remove"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class='tab ' id='tab1-3'>
+					<div class="list-block padding-t-2">
+						<div class="card">
+							<div class="card-content" id="stepContent">
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="footer" style="position:fixed;bottom:0;left:0;height:55px;">
+			<div class="row workflowBtn pop-content" style="height:100%" id="btnMainContent">
+
+			</div>
+		</div>
+		<!--附件弹出层-->
+		<div class="pop-target attach-content" id="attach-content">
+			<div class="card" style="margin:0;max-height:70%;overflow:auto">
+				<div class="card-content" id="attachContent" style="padding:5px">
+
+				</div>
+				<div class="card-content" id="uploadFileContent" style="padding:5px;">
+				</div>
+				<div class="clearfix" style="padding:5px;border:0">
+					<div class="btn-upload-new pull-right" onclick="selectUploadFile('pub')" id="commonUpload-btn" style="color:#fff !important">上传公共附件</div>
+					<div class="btn-upload-new pull-right" onclick="selectUploadFile('read')" id="readUpload-btn" style="margin-right: 10px;">上传参阅附件</div>
+
+				</div>
+			</div>
+		</div>
+		<!--附件弹出层end-->
+		<!--更多操作弹出层-->
+		<div class="pop-target operate-content" id="operate-content">
+			<div class="operate" style="padding:15px;" id="btnContent">
+
+			</div>
+		</div>
+		<!--更多操作弹出层end-->
+		<!--回退弹出层-->
+		<div class="pop-up pop-about pop-move-down flex-v-content" style="padding:0;z-index:10201;">
+
+			<div class="content-block content-block-two" id="selFbStepContent" style="">
+
+			</div>
+		</div>
+		<!--回退弹出层end-->
+		<!--否决弹出层-->
+		<!--<div class="pop-up pop-foujue pop-move-down flex-v-content" style="padding:0;z-index:10201">
+
+        <div class="content-block" id="foujueContent" style="position:absolute;bottom:10px;width:100%;">
+
+        </div>
+</div>-->
+		<!--否决弹出层end-->
+
+		<!--选择关联工作弹出层-->
+		<!--<div class="pop-up pop-checkdoc pop-move-down flex-v-content" style="padding:0;z-index:10201;">
+    <div id="checkdoc-content" class="list-block" style="margin:0;padding-bottom:40px;">
+
+    </div>
+    <div class="checkdoc-op clearfix">
+        <span class="pull-left pop-up-close" data-pop-up-close="pop-checkdoc">关闭</span>
+        <span class="pull-right close-popup pop-up-close" data-pop-up-close="pop-checkdoc" onclick="selectRelateValue()">确定</span>
+    </div>
+</div>-->
+		<!--<div class="popup popup-checkdoc" style="position:relative;z-index:10201;padding-bottom:50px;">
+    <div id="checkdoc-content" class="list-block">
+
+    </div>
+    <div class="checkdoc-op clearfix">
+        <span class="pull-left close-popup">关闭</span>
+        <span class="pull-right close-popup" onclick="selectRelateValue()">确定</span>
+    </div>
+</div>-->
+		<!--选择关联工作弹出层end-->
+
+		<!--选择关联审批任务弹出层-->
+
+		<!--<div class="pop-up pop-cxs pop-move-down  flex-v-content" style="padding:0;z-index:10201;">
+    <div id="cxs-content" class="list-block" style="margin:0;padding-bottom:40px;">
+
+    </div>
+    <div class="checkdoc-op clearfix">
+        <span class="pull-left pop-up-close"  data-pop-up-close="pop-cxs">关闭</span>
+        <span class="pull-right close-popup pop-up-close" data-pop-up-close="pop-cxs" onclick="selectCxsValue()">确定</span>
+    </div>
+</div>-->
+		<!--<div class="popup popup-cxs" style="position:relative;z-index:10201;padding-bottom:50px;">
+    <div id="cxs-content" class="list-block">
+
+    </div>
+    <div class="checkdoc-op clearfix">
+        <span class="pull-left close-popup">关闭</span>
+        <span class="pull-right close-popup" onclick="selectCxsValue()">确定</span>
+    </div>
+</div>-->
+		<!--选择关联审批任务弹出层end-->
+
+		<!--增加本步骤会签人弹出层-->
+		<div class="pop-up pop-select-sign pop-move-down  flex-v-content" style="padding:0;z-index:10201;">
+
+			<div class="content-block content-block-two" style="position:absolute;bottom:0;width:100%;">
+				<h3>请选择会签人</h3>
+				<div class="list-block" style="margin:0;padding-bottom:40px;">
+					<ul class="bg-white">
+						<li>
+							<div class="item-content item-link">
+								<div class="item-inner">
+									<div class="item-title label">选择</div>
+									<div style="width:90%;height:50px;" class="item-input selectSign" data-select-type='user1'>
+										<input type="hidden" id="sign_ids">
+									</div>
+								</div>
+							</div>
+							<div class="item-content select-item-content" style="border-bottom:1px dotted dodgerblue">
+								<div class="selected-item-content" id="selectedSign">
+
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<p>
+					<a href="#" class="pull-left close-popup pop-up-close" data-pop-up-close="pop-select-sign">关闭</a>
+					<a href="#" class="pull-right pop-up-close" data-pop-up-close="pop-select-sign" onclick="sendSign()">确定</a>
+				</p>
+				<p></p>
+			</div>
+		</div>
+		<!--增加本步骤会签人弹出层end-->
+
+		<!--增加本步骤传阅人弹出层-->
+		<div class="pop-up pop-select-transactor pop-move-down  flex-v-content" style="padding:0;z-index:10201;">
+
+			<div class="content-block content-block-two" style="position:absolute;bottom:0;width:100%;">
+				<h3>请选择传阅人</h3>
+				<div class="list-block" style="margin:0;padding-bottom:40px;">
+					<ul class="bg-white">
+						<li>
+							<div class="item-content item-link">
+								<div class="item-inner">
+									<div class="item-title label">选择</div>
+									<div style="width:90%;height:50px;" class="item-input selectTransator" data-select-type='user2'>
+										<input type="hidden" id="transactor_ids">
+									</div>
+								</div>
+							</div>
+							<div class="item-content select-item-content" style="border-bottom:1px dotted dodgerblue">
+								<div class="selected-item-content" id="selectedTransator">
+
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<p>
+					<a href="#" class="pull-left close-popup pop-up-close" data-pop-up-close="pop-select-transactor">关闭</a>
+					<a href="#" class="pull-right pop-up-close" data-pop-up-close="pop-select-transactor" onclick="sendTransator()">确定</a>
+				</p>
+				<p></p>
+			</div>
+		</div>
+		<!--增加本步骤传阅人弹出层end-->
+
+		<!--增加本步骤督办人弹出层-->
+		<div class="pop-up pop-select-oversee  pop-move-down  flex-v-content" style="padding:0;z-index:10201;">
+
+			<div class="content-block content-block-two" style="position:absolute;bottom:0;width:100%;">
+				<h3>督办</h3>
+				<div class="list-block" style="margin:0;padding-bottom:40px;">
+					<ul class="bg-white">
+						<li>
+							<div class="item-content item-link">
+								<div class="item-title label">督办人</div>
+								<div style="width:90%;" class="item-input selectOversee" data-select-type='user3'>
+									<input type="text" id="oversee_ids" readonly="readonly" value="22">
+								</div>
+							</div>
+							<!--<div class="item-content select-item-content" style="border-bottom:1px dotted dodgerblue">
+                        <div class="selected-item-content" id="selectedOversee">
+
+                        </div>
+                    </div>-->
+						</li>
+					</ul>
+				</div>
+				<p>
+					<a href="#" class="pull-left close-popup pop-up-close" data-pop-up-close="pop-select-oversee">关闭</a>
+					<a href="#" class="pull-right pop-up-close" data-pop-up-close="pop-select-oversee" onclick="sendOversee()">确定</a>
+				</p>
+				<p></p>
+			</div>
+		</div>
+		<!--增加本步骤督办人弹出层end-->
+
+		<!-- 增加会议安排弹出层-->
+		<div class="pop-up pop-meeting-anpai pop-move-down  flex-v-content" style=" padding:0;z-index:10201;background-color:#fff;">
+
+			<div class="content-block content-block-two" style="position:absolute;bottom:0;width:100%;background-color:#fff; padding:5px;">
+
+				<h3>会议安排</h3>
+				<div class="list-block" style="background-color:#fff;">
+					<ul style="background-color:#fff;">
+						<!-- Text inputs -->
+						<li>
+							<div class="item-content">
+								<div class="item-media"><i class="icon icon-form-name"></i></div>
+								<div class="item-inner">
+									<div class="item-title label">会议选择</div>
+									<div class="item-input">
+										<select id="roomid">
+
+										</select>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li>
+							<div class="item-content">
+								<div class="item-media"><i class="icon icon-form-email"></i></div>
+								<div class="item-inner">
+									<div class="item-title label">会议名称</div>
+									<div class="item-input">
+										<input type="text" id="name" placeholder="会议名称" onBlur="checktime()">
+									</div>
+								</div>
+							</div>
+						</li>
+						<li>
+							<div class="item-content">
+								<div class="item-media"><i class="icon icon-form-email"></i></div>
+								<div class="item-inner">
+									<div class="item-title label">会议开始时间</div>
+									<div class="item-input">
+
+										<input type="text" id="begin" placeholder="会议开始时间" onBlur="checktime()">
+									</div>
+								</div>
+							</div>
+						</li>
+						<li>
+							<div class="item-content">
+								<div class="item-media"><i class="icon icon-form-email"></i></div>
+								<div class="item-inner">
+									<div class="item-title label">会议结束时间</div>
+									<div class="item-input">
+										<input type="text" id="end" placeholder="会议结束时间" onBlur="checktime()">
+									</div>
+								</div>
+							</div>
+						</li>
+
+						<div style="text-align:right; width:90%; margin:0 auto;"><span id="checttimejieguo"></span></div>
+
+						<!-- Date -->
+
+					</ul>
+				</div>
+				<p>
+					<a href="#" class="pull-left close-popup pop-up-close button" data-pop-up-close="pop-meeting-anpai">关闭</a>
+					<a href="#" class="pull-right pop-up-close button button-fill" id="suremeetingtext" onclick="suremeeting()">确定</a>
+				</p>
+				<p></p>
+			</div>
+		</div>
+		<!-- 增加会议安排弹出层end-->
+	</body>
+
+	<script type="text/javascript" src="../../script/oldJs/office.sdk.js" charset='utf-8'></script>
+	<script type="text/javascript" src="../../script/oldJs/api.js"></script>
+	<script type='text/javascript' src='../../script/oldJs/zepto.min.js' charset='utf-8'></script>
+	<script type='text/javascript' src='../../script/oldJs/sm.js' charset='utf-8'></script>
+	<script type="text/javascript" src="../../script/oldJs/quickos.js"></script>
+	<script type='text/javascript' src='../../script/oldJs/sm-extend.min.js' charset='utf-8'></script>
+	<script type='text/javascript' src='../../script/oldJs/doT.min.js' charset='utf-8'></script>
+	<script type='text/javascript' src='../../script/oldJs/lib/workflow.template.js' charset='utf-8'></script>
+	<script type='text/javascript' src='../../script/oldJs/lib/workflow.jquery.js' charset='utf-8'></script>
+	<script type='text/javascript' src='../../script/oldJs/lib/pop-up/popup.zepto.js' charset='utf-8'></script>
+	<script type='text/javascript' src='../../script/oldJs/userSelect.js' charset='utf-8'></script>
+	<script type='text/javascript' src="../../script/oldJs/lib/pullToRefresh/pullToRefresh.js" charset='utf-8'></script>
+	<script type="text/javascript">
+
+		$api.loadJs($api.getIp() + "/data/org/department.js");
+		$api.loadJs($api.getIp() + "/data/org/user.js");
+	</script>
+
+	<script>
+
+		var uploadNumber = 0;
+		var canSelect = true,
+			tplCheckDocDone = true,
+			checkDocStart = 10,
+			tplCxsDone = true,
+			cxsStart = 10,
+			runid = null,
+			targetPhrasebook = "";
+		targetPstampbook = "";
+
+		function getFormatDateArr(dateStr) {
+
+			if(dateStr) {
+				//      	console.log(111)
+				var dateTime = dateStr.split(" ");
+				var retObj = {};
+				if(dateTime.length > 0) {
+					var date = dateTime[0].split("-");
+					retObj = {
+						year: date[0],
+						month: date[1],
+						day: date[2]
+					}
+					if(dateTime.length > 1) {
+						var time = dateTime[1].split(":");
+						$.extend(retObj, {
+							hour: time[0].replace(/\b(0+)/gi, ""),
+							mintues: time[1]
+						});
+					}
+				}
+				return retObj;
+			}
+		}
+		apiready = function() {
+
+
+
+			api.addEventListener({
+				name: 'navitembtn'
+			}, function(ret, err) {
+				if(ret.type == "left") {
+					api.closeWin();
+				}
+			});
+
+			var windows = api.windows();
+			var nowWindows = windows[1].name
+			//监听已经选择的常用语（填充办理意见）
+			openSelectPhrasebook = function(target) {
+				//          console.log(target);
+				targetPhrasebook = target;
+				// api.openWin({
+				// 	name: "phrasebook-list",
+				// 	url: "./phrasebook-list.html",
+				// 	pageParam: {
+				// 		type: "select",
+				// 		page: "workflow"
+				// 	}
+				// });
+				api.openTabLayout({
+					name: 'pstamp',
+					url: 'widget://html/center/phrasebook-list.html',
+					title: '我的常用语',
+					hideNavigationBar: false,
+					pageParam: {
+						type: "select",
+						page: "workflow"
+					},
+					navigationBar: {
+						background: '#E32416',
+						color: '#fff',
+						shadow: "#E32416",
+						leftButtons: [{
+							iconPath: 'widget://image/leftArrow.png'
+						}]
+					}
+				});
+			}
+			openSelectPstamp = function(target) {
+				//          console.log(target);
+				targetPstampbook = target;
+				// api.openWin({
+				// 	name: "pstamp-list",
+				// 	url: "./pstamp-list.html",
+				// 	pageParam: {
+				// 		type: "select",
+				// 		page: "workflow"
+				// 	}
+				// });
+				api.openTabLayout({
+					name: 'pstamp',
+					url: 'widget://html/center/pstamp.html',
+					title: '我的签章',
+					hideNavigationBar: false,
+					pageParam: {
+						type: "select",
+						page: "workflow"
+					},
+					navigationBar: {
+						background: '#E32416',
+						color: '#fff',
+						shadow: "#E32416",
+						leftButtons: [{
+							iconPath: 'widget://image/leftArrow.png'
+						}]
+					}
+				});
+			}
+			api.addEventListener({
+				name: "selectphrasebook"
+			}, function(ret) {
+				if(ret.value.page === "workflow") {
+					if($("#" + targetPhrasebook).length) {
+						if($("#" + targetPhrasebook).get(0).tagName === "TEXTAREA") {
+							$("#" + targetPhrasebook).val(ret.value.phrasebook);
+						} else {
+							$("#" + targetPhrasebook).find("textarea").val(ret.value.phrasebook);
+						}
+					}
+				}
+			});
+			api.addEventListener({
+				name: "selectpstamp"
+			}, function(ret) {
+				if(ret.value.page === "workflow") {
+					var imgUrl=$api.getIp()+ret.value.pstampbook.match(/.(\S*)/)[1]
+					$("#imgPstamp").attr({
+						"src": imgUrl
+					})
+					$("#imgPstamp").parent().parent().find("input").val(ret.value.pstampbook)
+				}
+			});
+			//下拉刷新
+			var pullRefresh = new pullToRefresh({
+				container: document.querySelector('.refresh-content'), //下拉容器
+				triggerDistance: 100 //下拉高度
+			}, function(ret) {
+				if(ret.status === "success") {
+					init(function() {
+						pullRefresh.cancelLoading()
+					});
+				}
+			});
+
+			init(function() {});
+
+			function init(cb) {
+
+				var callbackFun = cb;
+				if(api.pageParam.key) {
+
+					var posturl = Quickos.api.url("mobile/work/Form") + "&key=" + api.pageParam.key;
+
+					//                  console.log(posturl);
+					$.showPreloader();
+					setTimeout(function() {
+						$.hidePreloader();
+					}, 60000);
+//					console.log(posturl)
+					Quickos.api.get(posturl, function(ret, err) {
+
+						var renderdata = ret;
+						var key = api.pageParam.key;
+						// console.log(JSON.stringify(ret));
+						if(ret.run["runid"]) {
+							runid = ret.run["runid"];
+						}
+
+						$.extend(renderdata, {
+							key: key
+						});
+
+						//渲染表单
+						$("#content").workflow(renderdata, function(ret) {
+							//绑定计算总数
+							calSum();
+							//阻止关联工作冒泡
+							$(".kill-maopao").click(function(e) {
+								e.stopPropagation();
+							});
+							//显示content
+							$.hidePreloader();
+							$("#cardContent").removeClass("hidden");
+
+							//防止被遮住
+							$('textarea').on('click', function() {
+								var target = this;
+								setTimeout(function() {
+									target.scrollIntoView();
+
+								}, 400);
+							});
+							//部门选择器绑定
+							$("[data-select-type='department']").userSelect({
+								type: "department"
+							}, function(data) {
+								var tem = doT.template(WorkFlowTemplate.selectDepItemTpl());
+								var temStr = tem(data);
+								var inputObj = $(this).find("input");
+								//给input赋选择的值
+								inputObj.val(WorkFlow.handleData(data));
+								var name = inputObj.attr("name");
+								$("#" + name).html(temStr);
+							});
+
+							$("[data-select-type='user']").not(".selectSign").userSelect({
+								type: "user"
+							}, function(data) {
+								var tem = doT.template(WorkFlowTemplate.selectUserItemTpl());
+								var temStr = tem(data);
+								var inputObj = $(this).find("input");
+								//给input赋选择的值
+								inputObj.val(WorkFlow.handleData(data));
+								var name = inputObj.attr("name");
+								$("#" + name).html(temStr);
+							});
+
+							//用户选择器绑定  会签
+							$("[data-select-type='user1']").not(".selectSign").userSelect({
+								type: "user"
+							}, function(data) {
+								var tem = doT.template(WorkFlowTemplate.selectUserItemTpl());
+								var temStr = tem(data);
+								var inputObj = $(this).find("input");
+								//给input赋选择的值
+								inputObj.val(WorkFlow.handleData(data));
+								var name = inputObj.attr("name");
+								$("#" + name).html(temStr);
+							});
+							//用户选择器绑定  传阅
+							$("[data-select-type='user2']").not(".selectTransator").userSelect({
+								type: "user"
+							}, function(data) {
+								var tem = doT.template(WorkFlowTemplate.selectUserItemTpl());
+								var temStr = tem(data);
+								var inputObj = $(this).find("input");
+								//给input赋选择的值
+								inputObj.val(WorkFlow.handleData(data));
+								var name = inputObj.attr("name");
+								$("#" + name).html(temStr);
+							});
+
+							$("[data-select-type='user3']").not(".selectOversee").userSelect({
+								type: "user"
+							}, function(data) {
+								var tem = doT.template(WorkFlowTemplate.selectUserItemTpl());
+								var temStr = tem(data);
+								var inputObj = $(this).find("input");
+								//给input赋选择的值
+								inputObj.val(WorkFlow.handleData(data));
+								var name = inputObj.attr("name");
+								$("#" + name).html(temStr);
+							});
+							//防止被遮住
+							$('textarea').on('click', function() {
+								var target = this;
+								setTimeout(function() {
+									target.scrollIntoView();
+
+								}, 400);
+							});
+
+							//列表控件选人控件绑定
+							$(".listview-select-user").userSelect({
+								type: "user",
+								mul: true
+							}, function(data) {
+								var contentDom = $("#" + $(this).attr("data-content-id")),
+									inputDom = $("#" + $(this).attr("data-input-id"));
+
+								var tem = doT.template(WorkFlowTemplate.selectUserItemTpl());
+								var temStr = tem(data);
+								contentDom.html(temStr);
+								inputDom.val(WorkFlow.handleData(data));
+							});
+							//列表控件选部门控件绑定
+							$(".listview-select-department").userSelect({
+								type: "department",
+								mul: true
+							}, function(data) {
+								var contentDom = $("#" + $(this).attr("data-content-id")),
+									inputDom = $("#" + $(this).attr("data-input-id"));
+								var tem = doT.template(WorkFlowTemplate.selectDepItemTpl());
+								var temStr = tem(data);
+								contentDom.html(temStr);
+								inputDom.val(WorkFlow.handleData(data));
+							});
+							//删除列表控件选择的用户
+							$(document).off("click", ".lv-selected-item-content .select-item").on("click", ".lv-selected-item-content .select-item", function() {
+								var btnDom, targetDom;
+
+								btnDom = $("#" + $(this).parent().attr("data-btn-id"));
+								targetDom = $("#" + $(this).parent().attr("data-target-id"));
+
+								var removeId = $(this).attr("data-id");
+
+								var selectedStr = btnDom.attr("data-selected");
+
+								var selectedObj = JSON.parse(selectedStr);
+
+								selectedObj = WorkFlow.removeItemById(removeId, selectedObj);
+
+								//给input赋选择的值
+								targetDom.val(WorkFlow.handleData(selectedObj));
+
+								selectedStr = JSON.stringify(selectedObj);
+
+								//初始化选择器的值
+								btnDom.attr("data-selected", selectedStr);
+								$(this).remove();
+							});
+							//列表控件选时间事件绑定
+							$(".workflow-listview-datepicker input").each(function() {
+								if(!$(this).attr("data-hasbind") || $(this).attr("data-hasbind") !== "1") {
+									var $that = $(this),
+										format = $that.attr("data-format"),
+										inputValue = $that.val();
+									var dateObj = getFormatDateArr(inputValue);
+									if(format === "date") {
+										var temObj = {
+											formatValue: function(p, values, displayValues) {
+												return displayValues[0] + '-' + values[1] + '-' + values[2] + ' ' + values[3] + ':' + values[4];
+											}
+										};
+										if(inputValue) {
+											temObj["value"] = [dateObj.year, dateObj.month, dateObj.day, dateObj.hour, dateObj.mintues];
+										}
+										$that.datetimePicker(temObj);
+									} else if(format === "date(yyyy)") {
+										var temObj = {
+											dateFormat: "yyyy",
+										};
+										if(inputValue) {
+											temObj["value"] = [dateObj.year + "-01-01"];
+										}
+										$that.calendar(temObj);
+									} else if(format === "date(yyyy-mm)") {
+										var temObj = {
+											dateFormat: "yyyy-mm"
+										};
+										if(inputValue) {
+											temObj["value"] = [dateObj.year + "-" + dateObj.month + "-01"];
+										}
+										$that.calendar(temObj);
+									} else if(format === "date(yyyy-mm-dd)") {
+										var temObj = {
+											dateFormat: "yyyy-mm-dd"
+										};
+										if(inputValue) {
+											temObj["value"] = [dateObj.year + "-" + dateObj.month + "-" + dateObj.day];
+										}
+										$that.calendar(temObj);
+									} else if(format === "date(yyyy-mm-dd hh)") {
+										var temObj = {
+											formatValue: function(p, values, displayValues) {
+												return displayValues[0] + '-' + values[1] + '-' + values[2] + ' ' + values[3];
+											}
+										};
+										if(inputValue) {
+											temObj["value"] = [dateObj.year, dateObj.month, dateObj.day, dateObj.hour, "00"];
+										}
+										$that.datetimePicker(temObj);
+									} else if(format === "date(yyyy-mm-dd hh:ii)") {
+
+										var temObj = {
+											formatValue: function(p, values, displayValues) {
+												return displayValues[0] + '-' + values[1] + '-' + values[2] + ' ' + values[3] + ':' + values[4];
+											}
+										};
+										if(inputValue) {
+											temObj["value"] = [dateObj.year, dateObj.month, dateObj.day, dateObj.hour, dateObj.mintues];
+										}
+										$that.datetimePicker(temObj);
+									} else {
+										$that.datetimePicker({});
+									}
+									$that.attr("data-hasbind", "1")
+								}
+							});
+							//时间和日期选择器绑定
+
+							$(".workflow-datepicker input").click(function() {
+								var $that = $(this);
+								if(!$(this).attr("data-hasbind") || $(this).attr("data-hasbind") !== "1") {
+									var dateFormat = $that.parent().attr("data-date-format");
+									var inputValue = $that.val();
+									if(dateFormat) {
+										//去两边空格
+										dateFormat = dateFormat.trim();
+										var dateFormatArr = dateFormat.split(" ");
+										if(dateFormatArr.length > 1) {
+											if(inputValue) {
+												var timeObj = getFormatDateArr(inputValue);
+												$that.datetimePicker({
+													value: [timeObj.year, timeObj.month, timeObj.day, timeObj.hour, timeObj.mintues]
+												});
+											} else {
+												$that.datetimePicker({});
+											}
+										} else {
+											if(inputValue) {
+												var dateObj = getFormatDateArr(inputValue);
+												$that.calendar({
+													value: [dateObj.year + "-" + dateObj.month + "-" + dateObj.day]
+												})
+
+											} else {
+												$that.calendar({});
+											}
+										}
+									} else //没有时间格式化值直接日期选择吧........
+									{
+										if(!inputValue) {
+											$that.calendar({});
+										} else {
+											var cdateObj = getFormatDateArr(inputValue);
+											$that.calendar({
+												value: [cdateObj.year + "-" + cdateObj.month + "-" + cdateObj.day]
+											})
+
+										}
+									}
+									$that.attr("data-hasbind", "1");
+								}
+							});
+
+							//删除选择的用户
+							$(document).off("click", ".selected-item-content .select-item").on("click", ".selected-item-content .select-item", function() {
+								var targetDom;
+								if($(this).parents(".item-content").prev(".item-content").find("[data-select-type='user']").length > 0) {
+									targetDom = $(this).parents(".item-content").prev(".item-content").find("[data-select-type='user']");
+								} else {
+									targetDom = $(this).parents(".item-content").prev(".item-content").find("[data-select-type='department']");
+								}
+								var removeId = $(this).attr("data-id");
+
+								var selectedStr = targetDom.attr("data-selected");
+
+								var selectedObj = JSON.parse(selectedStr);
+
+								selectedObj = WorkFlow.removeItemById(removeId, selectedObj);
+
+								//给input赋选择的值
+								targetDom.find("input").val(WorkFlow.handleData(selectedObj));
+
+								selectedStr = JSON.stringify(selectedObj);
+
+								//初始化选择器的值
+								targetDom.attr("data-selected", selectedStr);
+								$(this).remove();
+							});
+
+							//删除选择的用户   会签
+							$(document).off("click", ".selected-item-content .select-item").on("click", ".selected-item-content .select-item", function() {
+								var targetDom;
+								if($(this).parents(".item-content").prev(".item-content").find("[data-select-type='user1']").length > 0) {
+									targetDom = $(this).parents(".item-content").prev(".item-content").find("[data-select-type='user1']");
+								} else {
+									targetDom = $(this).parents(".item-content").prev(".item-content").find("[data-select-type='department']");
+								}
+								var removeId = $(this).attr("data-id");
+
+								var selectedStr = targetDom.attr("data-selected");
+
+								var selectedObj = JSON.parse(selectedStr);
+
+								selectedObj = WorkFlow.removeItemById(removeId, selectedObj);
+
+								//给input赋选择的值
+								targetDom.find("input").val(WorkFlow.handleData(selectedObj));
+
+								selectedStr = JSON.stringify(selectedObj);
+
+								//初始化选择器的值
+								targetDom.attr("data-selected", selectedStr);
+								$(this).remove();
+							});
+
+							//删除选择的用户  传阅
+							$(document).off("click", ".selected-item-content .select-item").on("click", ".selected-item-content .select-item", function() {
+								var targetDom;
+								if($(this).parents(".item-content").prev(".item-content").find("[data-select-type='user2']").length > 0) {
+									targetDom = $(this).parents(".item-content").prev(".item-content").find("[data-select-type='user2']");
+								} else {
+									targetDom = $(this).parents(".item-content").prev(".item-content").find("[data-select-type='department']");
+								}
+								var removeId = $(this).attr("data-id");
+
+								var selectedStr = targetDom.attr("data-selected");
+
+								var selectedObj = JSON.parse(selectedStr);
+
+								selectedObj = WorkFlow.removeItemById(removeId, selectedObj);
+
+								//给input赋选择的值
+								targetDom.find("input").val(WorkFlow.handleData(selectedObj));
+
+								selectedStr = JSON.stringify(selectedObj);
+
+								//初始化选择器的值
+								targetDom.attr("data-selected", selectedStr);
+								$(this).remove();
+							});
+
+							//删除选择的用户   督办
+							$(document).off("click", ".selected-item-content .select-item").on("click", ".selected-item-content .select-item", function() {
+								var targetDom;
+								if($(this).parents(".item-content").prev(".item-content").find("[data-select-type='user3']").length > 0) {
+									targetDom = $(this).parents(".item-content").prev(".item-content").find("[data-select-type='user3']");
+								} else {
+									targetDom = $(this).parents(".item-content").prev(".item-content").find("[data-select-type='department']");
+								}
+								var removeId = $(this).attr("data-id");
+
+								var selectedStr = targetDom.attr("data-selected");
+
+								var selectedObj = JSON.parse(selectedStr);
+
+								selectedObj = WorkFlow.removeItemById(removeId, selectedObj);
+
+								//给input赋选择的值
+								targetDom.find("input").val(WorkFlow.handleData(selectedObj));
+
+								selectedStr = JSON.stringify(selectedObj);
+
+								//初始化选择器的值
+								targetDom.attr("data-selected", selectedStr);
+								$(this).remove();
+							});
+
+							//计算控件
+							WorkFlow.initCalculate();
+
+							//上传附件
+							$(document).off("click", ".upload-btn").on("click", ".upload-btn", function() {
+								$(this).next("input[type='file']").click();
+							});
+
+							$(".item-input input[type='radio']").click(function() {
+								var ischecked = $(this).attr('data-checked');
+								if(ischecked === 'false' && $(this).is(":checked")) {
+									$(this).attr('data-checked', "true");
+								} else {
+									var name = $(this).attr("name");
+									$(".item-input input[name='" + name + "']").prop('checked', false);
+									$(".item-input input[name='" + name + "']").attr('data-checked', "false");
+								}
+							});
+
+							//初始化数据
+							initValue();
+						});
+
+						//                      $(".selectSign").userSelect({type:"user",mul:1},function(data)
+						//                      {
+						//                          var tem=doT.template(WorkFlowTemplate.selectUserItemTpl());
+						//                          var temStr=tem(data);
+						//                          var inputObj=$(this).find("input");
+						//                          //给input赋选择的值
+						//                          inputObj.val(WorkFlow.handleData(data));
+						//                          var name=inputObj.attr("name");
+						//                          $("#selectedSign").html(temStr);
+						//                      });
+
+						//会签用户
+						$(".selectSign").userSelect({
+							type: "user",
+							mul: 1
+						}, function(data) {
+							var tem = doT.template(WorkFlowTemplate.selectUserItemTpl());
+							var temStr = tem(data);
+							var inputObj = $(this).find("input");
+							//给input赋选择的值
+							inputObj.val(WorkFlow.handleData(data));
+							var name = inputObj.attr("name");
+							$("#selectedSign").html(temStr);
+						});
+
+						//传阅用户
+						$(".selectTransator").userSelect({
+							type: "user",
+							mul: 1
+						}, function(data) {
+							var tem = doT.template(WorkFlowTemplate.selectUserItemTpl());
+							var temStr = tem(data);
+							var inputObj = $(this).find("input");
+							//给input赋选择的值
+							inputObj.val(WorkFlow.handleData(data));
+							var name = inputObj.attr("name");
+							$("#selectedTransator").html(temStr);
+						});
+						//督办
+						//                      $(".selectOversee").userSelect({type:"user",mul:1},function(data)
+						//                      {
+						//                          var tem=doT.template(WorkFlowTemplate.selectUserItemTpl());
+						//                          var temStr=tem(data);
+						//                          var inputObj=$(this).find("input");
+						//                          //给input赋选择的值
+						//                          inputObj.val(WorkFlow.handleData(data));
+						//                          var name=inputObj.attr("name");
+						//                          $("#selectedOversee").html(temStr);
+						//                      });
+
+						$(document).off("click", ".workflow-item h3").on("click", ".workflow-item h3", function() {
+
+							$(this).toggleClass("workflow-item-title-active");
+							var $listBlock = $(this).next(".list-block");
+							$listBlock.toggleClass("workflow-item-active")
+						});
+
+						$(document).off("click", "#btnMainContent .item").on("click", "#btnMainContent .item", function() {
+							$(".pop-target").removeClass("pop-target-active");
+							var targetId = $(this).attr("data-target");
+							$("#" + targetId).toggleClass("pop-target-active")
+						})
+						$(".pop-target").click(function() {
+							$(this).removeClass("pop-target-active");
+						});
+						//干掉冒泡f**k
+						$(" .attach-content .card,.operate-content .operate").click(function(event) {
+							event.stopPropagation();
+						});
+
+						getListviewValue();
+
+						callbackFun();
+					});
+				}
+			}
+
+			//关闭页面
+			closeWin = function() {
+				if(api.pageParam.closeToWin) {
+					var initName = api.pageParam.closeToWin;
+					api.sendEvent({
+						name: initName,
+						extra: {}
+					});
+				}
+				api.sendEvent({
+					name: 'initBadge',
+					extra: {}
+				});
+				setTimeout(function() {
+					api.closeWin();
+				}, 500);
+			}
+
+			//获取已经选择的工作关联列表
+
+			//关联工作分页
+			$api.isScrollDown("#checkdoc-content", function(ret) {
+				if(ret) {
+					if(tplCheckDocDone) {
+						getCheckDocList(checkDocStart, 10, function() {
+							checkDocStart += 10;
+						});
+					}
+				}
+			});
+			//选择关联工作
+			selectCheckDoc = function() {
+				/*$.popup('.popup-checkdoc');*/
+				Popup.init();
+				Popup.showPopUp("pop-checkdoc");
+				$("#checkdoc-content").html("");
+
+				$.showPreloader();
+				checkDocStart = 10;
+				getCheckDocList(0, 10, $.noop);
+			}
+			//获取关联工作列表
+			function getCheckDocList(start, length, cb) {
+				tplCheckDocDone = false; //全局
+				var s = start,
+					temStr = "",
+					callback = cb,
+					selectedArr = $("#workrelatedstr").val().split(","); //数组
+				//获取已经选择的项
+				url = 'workflow/form/getdoclist';
+				url = Quickos.api.url(url),
+					postdata = {
+						key: api.pageParam.key,
+						start: start,
+						length: length
+					};
+				Quickos.api.post(url, postdata, function(ret, err) {
+					if(ret.isSuccess) {
+						if(ret.data.length === 0 && s === 0) {
+							temStr = ' <div style="width:100%;height:10rem;text-align:center">\n' +
+								'                    <img style="display:inline-block;height:30%;margin-top:3rem;" src="../image/noContent_yet.png">\n' +
+								'                    <br>\n' +
+								'                    <span>暂没内容</span>\n' +
+								'                 </div>'
+							$("#checkdoc-content").html(temStr);
+						} else {
+							var tem = doT.template(WorkFlowTemplate.workflowCheckDocItem()),
+								data = ret.data,
+								dataObj = {
+									list: data,
+									selectedArr: selectedArr
+								};
+							temStr = tem(dataObj);
+							$("#checkdoc-content").append(temStr);
+
+							//阻止冒泡
+							$(".kill-maopao").click(function(e) {
+								e.stopPropagation();
+							});
+
+							setTimeout(function() {
+								tplCheckDocDone = true;
+							}, 2000);
+						}
+						$.hidePreloader();
+					} else {
+						api.toast({
+							msg: ret.msg,
+							duration: 2000
+						});
+					}
+					callback();
+				});
+
+				setTimeout(function() {
+					$.hidePreloader();
+				}, 50000);
+			}
+			//选择关联工作值
+			selectRelateValue = function() {
+
+				var $checkedValueDom = $("#checkdoc-content [name='workrelatedstr']:checked"),
+					htmlstr = "",
+					selected = "";
+				$checkedValueDom.each(function() {
+					selected += "," + $(this).val();
+					/*$("#workrelatedstr").val($("#workrelatedstr").val()+","+$(this).val());*/
+					htmlstr += $(this).parents("[data-id='" + $(this).val() + "']").get(0).outerHTML;
+				});
+				$("#selected-related-content").html(htmlstr);
+				//阻止冒泡
+				$(".kill-maopao").click(function(e) {
+					e.stopPropagation();
+				});
+				$("#workrelatedstr").val(selected);
+				//取消已经选择的checkbox的选中
+				$("#selected-related-content").find("input[name='workrelatedstr']").prop("checked", false);
+			};
+			//删除关联工作选项
+			removeCheckDocItem = function() {
+				var $checkedValueDom = $("#selected-related-content [name='workrelatedstr']:checked");
+				if($checkedValueDom.length) {
+
+					$.confirm('您确定要删除所选项吗？', '提示', function() {
+						$checkedValueDom.each(function() {
+							var runid = $(this).val(),
+								resultValue = $api.removeItemFromStr($("#workrelatedstr").val(), runid);
+							$("#workrelatedstr").val(resultValue);
+							$("#selected-related-content").find("[data-id='" + runid + "']").remove();
+						});
+
+						if(!$("#selected-related-content [name='workrelatedstr']").length > 0) {
+							var temStr = ' <div style="width:100%;height:10rem;text-align:center">\n' +
+								'                    <img style="display:inline-block;height:30%;margin-top:3rem;" src="../image/noContent_yet.png">\n' +
+								'                    <br>\n' +
+								'                    <span>暂没内容</span>\n' +
+								'                 </div>';
+							$("#selected-related-content").html(temStr);
+						}
+					});
+				} else {
+					api.toast({
+						msg: "所选项为空",
+						duration: 2000
+					});
+				}
+			}
+
+			//关联审批任务分页
+			$api.isScrollDown("#cxs-content", function(ret) {
+				if(ret) {
+					if(tplCxsDone) {
+						getCxsList(cxsStart, 10, function() {
+							cxsStart += 10;
+						});
+					}
+				}
+			});
+			//选择关联审批任务
+			selectCxsDoc = function() {
+				Popup.init();
+				Popup.showPopUp("pop-cxs");
+				/*$.popup('.popup-cxs');*/
+				$("#cxs-content").html("");
+
+				$.showPreloader();
+				cxsStart = 10;
+				getCxsList(0, 10, $.noop);
+			};
+			//获取关联审批任务列表
+			function getCxsList(start, length, cb) {
+				tplCxsDone = false; //全局
+				var s = start,
+					temStr = "",
+					selectedArr = $("#cxsstrhelp").val().split(","), //数组
+					callback = cb,
+					url = 'workflow/form/getcxslist';
+				url = Quickos.api.url(url),
+					postdata = {
+						key: api.pageParam.key,
+						start: start,
+						length: length
+					};
+
+				Quickos.api.post(url, postdata, function(ret, err) {
+					if(ret.isSuccess) {
+
+						if(ret.data.length === 0 && s === 0) {
+							temStr = ' <div style="width:100%;height:10rem;text-align:center">\n' +
+								'                    <img style="display:inline-block;width:30%;margin-top:3rem;" src="../image/noContent_yet.png">\n' +
+								'                    <br>\n' +
+								'                    <span>暂没内容</span>\n' +
+								'                 </div>'
+							$("#cxs-content").html(temStr);
+						} else {
+							var tem = doT.template(WorkFlowTemplate.workflowCxslistItem());
+							temStr = tem({
+								list: ret.data,
+								selectedArr: selectedArr
+							});
+							$("#cxs-content").append(temStr);
+							setTimeout(function() {
+								tplCxsDone = true;
+							}, 2000);
+						}
+					} else {
+						api.toast({
+							msg: ret.msg,
+							duration: 2000
+						});
+					}
+					$.hidePreloader();
+					callback();
+
+				});
+				setTimeout(function() {
+					$.hidePreloader();
+				}, 50000);
+			}
+			//选择关联审批任务值
+			selectCxsValue = function() {
+				var $cxsValueDom = $("#cxs-content [name='cxsstr']:checked"),
+					htmlstr = "",
+					selectedstr = "",
+					cxsselectedArr = [];
+				$cxsValueDom.each(function() {
+					selectedstr += "," + $(this).val();
+					cxsselectedArr.push(JSON.parse($(this).attr("data-json")));
+
+					htmlstr += $(this).parents("[data-id='" + $(this).val() + "']").get(0).outerHTML;
+				});
+
+				$("#selected-cxs-content").html(htmlstr);
+
+				$("#cxsstrhelp").val(selectedstr);
+
+				$("#cxsstr").val(JSON.stringify(cxsselectedArr));
+				//取消已经选择的checkbox的选中
+				$("#selected-cxs-content").find("input[name='cxsstr']").prop("checked", false);
+			};
+
+			//从json字符串中删除某对象
+			remvoeCxsItemFromStr = function(lstr, removeStr) {
+				lstr = JSON.parse(lstr);
+				for(var x in lstr) {
+					if(removeStr == JSON.stringify(lstr[x])) {
+						lstr.splice(x, 1);
+					}
+				}
+				return JSON.stringify(lstr);
+			}
+
+			//删除关联审批任务选项
+			removeCxsItem = function() {
+				var $cxsValueDom = $("#selected-cxs-content [name='cxsstr']:checked");
+				if($cxsValueDom.length) {
+					$.confirm('您确定要删除所选项吗？', '提示', function() {
+						$cxsValueDom.each(function() {
+							var runid = $(this).val(),
+								data = $(this).attr("data-json");
+							resultValue = remvoeCxsItemFromStr($("#cxsstr").val(), data),
+								resultHelpValue = $api.removeItemFromStr($("#cxsstrhelp").val(), runid);
+							$("#cxsstr").val(resultValue);
+							$("#cxsstrhelp").val(resultHelpValue);
+							$("#selected-cxs-content").find("[data-id='" + runid + "']").remove();
+						});
+						if(!$("#selected-cxs-content [name='cxsstr']").length > 0) {
+							var temStr = ' <div style="width:100%;height:10rem;text-align:center">\n' +
+								'                    <img style="display:inline-block;width:30%;margin-top:3rem;" src="../image/noContent_yet.png">\n' +
+								'                    <br>\n' +
+								'                    <span>暂没内容</span>\n' +
+								'                 </div>';
+							$("#selected-cxs-content").html(temStr);
+						}
+
+					});
+				} else {
+					api.toast({
+						msg: "所选项为空",
+						duration: 2000
+					});
+				}
+			}
+			//删除流程
+			deleteWorkflow = function() {
+				$.confirm("您确定要删除该工作吗？", "提示", function() {
+
+					var id = $("#runid").val(),
+						postdata = {
+							id: id
+						},
+						url = 'mobile/work/del';
+					url = Quickos.api.url(url);
+					$.showPreloader();
+					Quickos.api.post(url, postdata, function(ret, err) {
+						if(ret.isSuccess) {
+							$.hidePreloader();
+							api.toast({
+								msg: ret.msg,
+								duration: 2000
+							});
+							setTimeout(function() {
+								closeWin();
+							}, 2000);
+						} else {
+							api.toast({
+								msg: ret.msg,
+								duration: 2000
+							});
+						}
+
+					});
+					setTimeout(function() {
+						$.hidePreloader();
+					}, 5000);
+				});
+			};
+
+			//打开下一步页面
+			openWorkflowNext = function() {
+				var temCheckItemObj = typeof(checkItemObj) == "undefined" ? {} : checkItemObj;
+				if(WorkFlow.validate(temCheckItemObj)) {
+					getListviewValue();
+					//处理form数据 to json
+					var postdatas = $("#form_data").serializeArray();
+					//              console.log(postdatas[0]);
+					//              var url=Quickos.api.url("http://192look.php");
+					//              $.showPreloader();
+					//				var test=Json.parse(JSON.stringify(postdatas));
+					for(var i in postdatas) {
+						//					console.log(JSON.stringify(postdatas[i]))
+						var a = postdatas[i].name.substr(0, 5)
+						if(a == "data_") {
+							if(postdatas[i].value == '') {
+								api.toast({
+									msg: "请对表单进行办理后转交",
+									duration: 2000
+								});
+								return false;
+							}
+						}
+					}
+					postdatas = handleFormData(postdatas);
+					postdatas.saveflag = "turn";
+					var urls = Quickos.api.url("workflow/form/handleRun");
+					$.showPreloader();
+					Quickos.api.post(urls, postdatas, function(ret, err) {
+						if(ret.status === 0) {
+							setTimeout(function() {
+								var topflag = $("input[name='topflag']").val();
+								var opflag = $("input[name='opflag']").val();
+								$.hidePreloader();
+								// api.openWin({
+								// 	name: "workflownext",
+								// 	url: "./workflow-next.html",
+								// 	pageParam: {
+								// 		key: api.pageParam.key,
+								// 		topflag: topflag,
+								// 		opflag: opflag,
+								// 		content: $("#remindContent").val(),
+								// 		closeToWin: api.pageParam.closeToWin,
+								// 		flowid: api.pageParam.flowid,
+								// 		processid: api.pageParam.processid
+								// 	}
+								// });
+								api.openTabLayout({
+									name: 'workflownext',
+									url: 'widget://html/workbench/workflow-next.html',
+									title: '转交下一步',
+									hideNavigationBar: false,
+									pageParam: {
+										key: api.pageParam.key,
+										topflag: topflag,
+										opflag: opflag,
+										content: $("#remindContent").val(),
+										closeToWin: api.pageParam.closeToWin,
+										flowid: api.pageParam.flowid,
+										processid: api.pageParam.processid
+									},
+									navigationBar: {
+										background: '#E32416',
+										color: '#fff',
+										leftButtons: [{
+											iconPath: 'widget://image/leftArrow.png'
+										}]
+									}
+								});
+							}, 500);
+						} else {
+							api.toast({
+								msg: ret.info,
+								duration: 2000
+							});
+						}
+					});
+					setTimeout(function() {
+						$.hidePreloader();
+					}, 50000);
+				}
+			};
+			//保存表单
+			publish = function() {
+				getListviewValue();
+				var temCheckItemObj = typeof(checkItemObj) == "undefined" ? {} : checkItemObj;
+				if(WorkFlow.validate(temCheckItemObj)) {
+					var postdata = $("#form_data").serializeArray();
+					postdata = handleFormData(postdata);
+					/*if(!postdata.content)
+					{
+					    api.toast({
+					        msg:"请输入办理意见",
+					        duration:2000
+					    });
+					    return false;
+					}*/
+					var url = Quickos.api.url("workflow/form/handleRun");
+					$.showPreloader();
+					Quickos.api.post(url, postdata, function(ret, err) {
+						if(ret.status === 0) {
+							api.toast({
+								msg: "保存成功",
+								duration: 2000
+							});
+						} else {
+							api.toast({
+								msg: ret.info,
+								duration: 2000
+							});
+						}
+						$.hidePreloader();
+					});
+					setTimeout(function() {
+						$.hidePreloader();
+					}, 5000);
+				}
+			};
+			//办理完毕表单提交
+			finishOp = function() {
+				var temCheckItemObj = typeof(checkItemObj) == "undefined" ? {} : checkItemObj;
+				if(WorkFlow.validate(temCheckItemObj)) {
+					getListviewValue();
+					var ids = $("#sign_ids").val();
+					var formdata = $("#form_data").serializeArray();
+					formdata = handleFormData(formdata);
+					var postdata = $.extend(formdata, {
+						op: "transactor",
+						behavior: "",
+						key: api.pageParam.key,
+						uid: ids,
+						formhash: "asdasd"
+					});
+					postdata["content"] = $("#banli_content").val();
+					postdata.saveflag = "finish";
+					var url = Quickos.api.url("workflow/form/addSignAndFinish", {
+						'inajax': true
+					});
+					$.showPreloader();
+					Quickos.api.post(url, postdata, function(ret, err) {
+						if(ret.isSuccess) {
+							var againUrl = _API_SITE_ + ret.redirect;
+							Quickos.api.get(againUrl, function(ret, err) {
+								if(ret.isSuccess) {
+									api.toast({
+										msg: "办理完毕",
+										duration: 2000
+									});
+									setTimeout(function() {
+										$.hidePreloader();
+										closeWin();
+									}, 2000)
+								} else {
+									api.toast({
+										msg: ret.msg,
+										duration: 2000
+									});
+								}
+							});
+						} else {
+							api.toast({
+								msg: ret.msg,
+								duration: 2000
+							});
+						}
+					});
+					setTimeout(function() {
+						$.hidePreloader();
+					}, 5000);
+				}
+			};
+			//点击办理完毕
+			finish = function() {
+				var temCheckItemObj = typeof(checkItemObj) == "undefined" ? {} : checkItemObj;
+				if(WorkFlow.validate(temCheckItemObj)) {
+					getListviewValue();
+					$.modal({
+						title: '<h5 style="text-align: left">办理意见</h5><textarea id="banli_content" placeholder="请输入办理意见"></textarea>',
+						buttons: [{
+								text: '取消',
+								close: true
+							},
+							{
+								text: '确定',
+								onClick: function() {
+									var postdata = $("#form_data").serializeArray();
+									postdata = handleFormData(postdata);
+
+									var type = postdata["topflag"];
+									var content = $("#banli_content").val();
+									if((type == 4 && content == '') || (type == 3 && content == '')) {
+										api.toast({
+											msg: "请填写办理意见",
+											duration: 2000
+										});
+									} else {
+										postdata["saveflag"] = "finish";
+										postdata["content"] = $("#banli_content").val();
+										// console.log("----------"+$("#banli_content").val());
+										var firsturl = Quickos.api.url("workflow/form/handleRun");
+										$.showPreloader();
+										//先保存
+										Quickos.api.post(firsturl, postdata, function(ret, err) {
+											if(ret.status === 0) {
+												var topflag = $("[name='topflag']").val();
+												var secondurl = Quickos.api.url("workflow/handle/complete") + "&topflag=" + topflag + "&key=" + api.pageParam.key + "&inajax=true";
+												//后办理完毕
+
+												Quickos.api.get(secondurl, function(ret, err) {
+													$.hidePreloader();
+													if(ret.isSuccess) {
+														api.toast({
+															msg: "已成功办理",
+															duration: 2000
+														});
+														api.sendEvent({
+															name: 'test',
+														});
+														setTimeout(function() {
+															api.closeToWin({
+																name: nowWindows
+															});
+														}, 2000)
+													} else {
+														api.toast({
+															msg: ret.msg,
+															duration: 2000
+														});
+													}
+												});
+												setTimeout(function() {
+													$.hidePreloader();
+												}, 50000);
+											} else {
+												api.toast({
+													msg: ret.info,
+													duration: 2000
+												});
+											}
+											$.hidePreloader();
+										});
+									}
+									setTimeout(function() {
+										$.hidePreloader();
+									}, 50000);
+								}
+							}
+						]
+					})
+					// $.confirm('直接办理完毕请点击【确认】，若需增加传阅人请点击【传阅】','提示', function ()
+					// {
+					//     var postdata=$("#form_data").serializeArray();
+					//     postdata=handleFormData(postdata);
+					//
+					//     var firsturl=Quickos.api.url("workflow/form/handleRun");
+					//     $.showPreloader();
+					//     //先保存
+					//     Quickos.api.post(firsturl,postdata,function(ret,err)
+					//     {
+					//         if(ret.status===0)
+					//         {
+					//             var topflag=$("[name='topflag']").val();
+					//             var secondurl=Quickos.api.url("workflow/handle/complete")+"&topflag="+topflag+"&key="+api.pageParam.key+"&inajax=true";
+					//             //后办理完毕
+					//             Quickos.api.get(secondurl,function(ret,err)
+					//             {
+					//                 $.hidePreloader();
+					//                 if(ret.isSuccess)
+					//                 {
+					//                     api.toast({
+					//                         msg:"办理完毕",
+					//                         duration:2000
+					//                     });
+					//                     setTimeout(function()
+					//                     {
+					//                         closeWin();
+					//                     },2000)
+					//                 }
+					//                 else
+					//                 {
+					//                     api.toast({
+					//                         msg:ret.msg,
+					//                         duration:2000
+					//                     });
+					//                 }
+					//             });
+					//             setTimeout(function()
+					//             {
+					//                 $.hidePreloader();
+					//             },50000);
+					//         }
+					//         else
+					//         {
+					//             api.toast({
+					//                 msg:ret.info,
+					//                 duration:2000
+					//             });
+					//         }
+					//         $.hidePreloader();
+					//     });
+					//     setTimeout(function()
+					//     {
+					//         $.hidePreloader();
+					//     },50000);
+					// },function()
+					// {
+					//     Popup.init();
+					//     Popup.showPopUp("pop-select-sign");
+					//    /* $.popup('.popup-select-sign');*/
+					// });
+				}
+			};
+			//选择提醒对象
+			selectReminder = function() {
+				$("#remind").val("");
+				Popup.init();
+				Popup.showPopUp("pop-about");
+				/*$.popup('.popup-about');*/
+			};
+			//回退操作
+			fallback = function() {
+				var content = $("#fallback_content").val(),
+					remind = $("#remind").val();
+				if(content === "") {
+					content = "已回退"
+				}
+				var postdata = {};
+				var type = $("#backtype").val();
+				if(type === "1") {
+					postdata = {
+						remind: remind,
+						formhash: "sdfdsfsdfdsfdsfsd"
+					};
+				} else {
+					if($("#form_pres").serializeArray().length < 1) {
+						api.toast({
+							msg: "该办理步骤不允许回退",
+							duration: 1500
+						});
+						return
+					} else {
+						var id = parseInt($("#form_pres").serializeArray()[0].value);
+						postdata = {
+							remind: remind,
+							formhash: "sdfdsfsdfdsfdsfsd",
+							id: id
+						};
+					}
+				}
+				var temArr = [];
+				$("input[name='back_remindways']:checked").each(function() {
+					temArr.push($(this).val());
+
+				});
+				if(remind === "" && temArr.length > 0) {
+					api.toast({
+						msg: "请输入提醒内容",
+						duration: 1500
+					});
+					return;
+				}
+				postdata['remindway'] = temArr.join(",");
+				postdata['content'] = content;
+				var url = Quickos.api.url('workflow/handle/fallback', {
+					key: api.pageParam.key
+				});
+				//          console.log(url);
+				//			console.log(JSON.stringify(postdata))
+				$.showPreloader();
+				Quickos.api.post(url, postdata, function(ret, err) {
+					$.hidePreloader();
+					if(ret.isSuccess) {
+						Popup.hiddenPopUp("pop-about");
+						api.toast({
+							msg: "回退成功",
+							duration: 1500
+						});
+						api.sendEvent({
+							name: 'test',
+						});
+						setTimeout(function() {
+							api.closeToWin({
+								name: nowWindows
+							});
+						}, 1500);
+					} else {
+						api.toast({
+							msg: "回退失败",
+							duration: 1500
+						});
+						setTimeout(function() {
+							closeWin();
+						}, 1500);
+					}
+				});
+				setTimeout(function() {
+					$.hidePreloader();
+					Popup.hiddenPopUp("pop-about");
+					api.toast({
+						msg: "回退成功",
+						duration: username
+					});
+					setTimeout(function() {
+						closeWin();
+					}, 1500);
+				}, 3000);
+			};
+			//		会签
+			sign = function() {
+				Popup.init();
+				Popup.showPopUp("pop-select-sign");
+			}
+			sendSign = function() {
+				var temCheckItemObj = typeof(checkItemObj) == "undefined" ? {} : checkItemObj;
+				if(WorkFlow.validate(temCheckItemObj)) {
+					getListviewValue();
+					var ids = $("#sign_ids").val();
+					if(ids == '') {
+						api.toast({
+							msg: "请选择会签人员",
+							duration: 2000
+						});
+					} else {
+						var formdata = $("#form_data").serializeArray();
+						formdata = handleFormData(formdata);
+						var postdata = $.extend(formdata, {
+							op: "sign",
+							behavior: "",
+							key: api.pageParam.key,
+							uid: ids,
+							formhash: "asdasd"
+						});
+						postdata["content"] = $("#banli_content").val();
+						postdata.saveflag = "finish";
+						var url = Quickos.api.url("workflow/form/addSign", {
+							'inajax': true
+						});
+						$.showPreloader();
+						Quickos.api.post(url, postdata, function(ret, err) {
+							if(ret.isSuccess) {
+								api.toast({
+									msg: "已成功添加会签人",
+									duration: 2000
+								});
+								setTimeout(function() {
+									$.hidePreloader();
+								}, 1000)
+							} else {
+								api.toast({
+									msg: '网络错误，请稍后重试',
+									duration: 2000
+								});
+							}
+						});
+					}
+					setTimeout(function() {
+						$.hidePreloader();
+					}, 5000);
+				}
+			};
+			//		传阅
+			transactor = function() {
+				Popup.init();
+				Popup.showPopUp("pop-select-transactor");
+			}
+			sendTransator = function() {
+
+				var temCheckItemObj = typeof(checkItemObj) == "undefined" ? {} : checkItemObj;
+				if(WorkFlow.validate(temCheckItemObj)) {
+					getListviewValue();
+					var ids = $("#transactor_ids").val();
+					if(ids == '') {
+						api.toast({
+							msg: "请选择传阅人员",
+							duration: 2000
+						});
+					} else {
+						var formdata = $("#form_data").serializeArray();
+						formdata = handleFormData(formdata);
+						var postdata = $.extend(formdata, {
+							op: "transactor",
+							behavior: "",
+							key: api.pageParam.key,
+							uid: ids,
+							formhash: "asdasd"
+						});
+						postdata["content"] = $("#banli_content").val();
+						postdata.saveflag = "finish";
+						var url = Quickos.api.url("workflow/form/addSign", {
+							'inajax': true
+						});
+						$.showPreloader();
+						Quickos.api.post(url, postdata, function(ret, err) {
+							if(ret.isSuccess) {
+								api.toast({
+									msg: "已成功添加传阅人",
+									duration: 2000
+								});
+								setTimeout(function() {
+									$.hidePreloader();
+								}, 1000)
+							} else {
+								api.toast({
+									msg: '网络错误，请稍后重试',
+									duration: 2000
+								});
+							}
+						});
+					}
+					setTimeout(function() {
+						$.hidePreloader();
+					}, 5000);
+				}
+			};
+			//      督办
+			var uids = ''
+			oversee = function() {
+				var url = Quickos.api.url("user/info/getRoleUser", {
+					'inajax': true
+				});
+				Quickos.api.get(url, function(ret, err) {
+					var realname = ''
+					for(var i = 0; i < ret.data.length; i++) {
+						realname = ret.data[i].realname + ';' + realname
+						uids = 'u_' + ret.data[i].uid + ',' + uids
+					}
+					$("#oversee_ids").attr("value", realname)
+				})
+				//				console.log($("#oversee_ids").val())
+				Popup.init();
+				Popup.showPopUp("pop-select-oversee");
+			}
+			sendOversee = function() {
+				var temCheckItemObj = typeof(checkItemObj) == "undefined" ? {} : checkItemObj;
+				if(WorkFlow.validate(temCheckItemObj)) {
+					getListviewValue();
+					var ids = uids;
+					if(ids == '') {
+						api.toast({
+							msg: "请选择督办人员",
+							duration: 2000
+						});
+					} else {
+						var formdata = $("#form_data").serializeArray();
+						formdata = handleFormData(formdata);
+						var postdata = $.extend(formdata, {
+							op: "oversee",
+							behavior: "",
+							key: api.pageParam.key,
+							uid: ids,
+							formhash: "asdasd"
+						});
+						postdata["content"] = $("#banli_content").val();
+						postdata.saveflag = "finish";
+						var url = Quickos.api.url("workflow/form/addSign", {
+							'inajax': true
+						});
+						$.showPreloader();
+						Quickos.api.post(url, postdata, function(ret, err) {
+							console.log(JSON.stringify(ret))
+							if(ret.isSuccess) {
+								api.toast({
+									msg: "已成功添加督办",
+									duration: 2000
+								});
+								setTimeout(function() {
+									$.hidePreloader();
+								}, 2000)
+							} else {
+								api.toast({
+									msg: '网络错误，请稍后重试',
+									duration: 2000
+								});
+							}
+						});
+					}
+					setTimeout(function() {
+						$.hidePreloader();
+					}, 5000);
+				}
+			};
+			// 唤起否决
+			foujue = function() {
+				var remindcontent = $("#remindContent").val();
+				if(!remindcontent) {
+					api.toast({
+						msg: "请输入办理意见",
+						duration: 2000
+					});
+					return false;
+				}
+				$("#yijian").val("暂无意见");
+				$("#remind1").val("本次操作，将否决当前工作条文");
+				Popup.init();
+				Popup.showPopUp("pop-foujue");
+				/*$.popup('.popup-about');*/
+			};
+
+			//否决操作
+			fallback1 = function() {
+				var remind1 = $("#remind1").val();
+				if(remind1 === "") {
+					$.alert("提醒内容为必填项");
+					return;
+				}
+				var postdata = {};
+				var type = $("#backtype1").val();
+				if(type === "1") {
+					postdata = {
+						content1: $("#yijian").val(),
+						remind1: $("#remind1").val(),
+						formhash: "sdfdsfsdfdsfdsfsd"
+					}
+				} else {
+					var id = parseInt($("#form_pres").serializeArray()[0].value);
+					postdata = {
+						content1: $("#yijian").val(),
+						remind1: $("#remind1").val(),
+						formhash: "sdfdsfsdfdsfdsfsd",
+						id: id
+					};
+				}
+				var temArr = [];
+				$("input[name='back_remindways1']:checked").each(function() {
+					temArr.push($(this).val());
+				});
+
+				postdata['remindway1'] = temArr.join(",");
+
+				var url = Quickos.api.url('mobile/work/endflow', {
+					key: api.pageParam.key
+				});
+				$.showPreloader();
+
+				Quickos.api.post(url, postdata, function(ret, err) {
+
+					$.hidePreloader();
+					if(ret.isSuccess) {
+						api.toast({
+							msg: "否决成功",
+							duration: 2000
+						});
+						setTimeout(function() {
+							closeWin();
+						}, 2000);
+					} else {
+						api.toast({
+							msg: ret.msg,
+							duration: 2000
+						});
+					}
+				});
+				setTimeout(function() {
+					$.hidePreloader();
+				}, 5000);
+			};
+
+			//处理提交的form数据 转成json格式
+			function handleFormData(data) {
+				var postData = {};
+				for(var x in data) {
+					postData[data[x].name] = data[x].value;
+				}
+				return postData;
+			}
+
+			//选择上传文件并上传
+			selectUploadFile = function(type) {
+				if(canSelect) {
+					$api.selectUploadFile(function(data) {
+						var filePath = data;
+						var file = $api.getFileTypeAndName(filePath);
+						$.extend(file, {
+							id: "fileUploadItem" + uploadNumber
+						});
+
+						var tem = '',
+							temStr = '';
+						if(type == "pub") {
+							tem = doT.template(WorkFlowTemplate.uploadattachTpl());
+							var $attchContent = $("#commonAttach");
+						} else {
+							tem = doT.template(WorkFlowTemplate.uploadReadattachTpl());
+							var $attchContent = $("#readAttach");
+						}
+						temStr = tem(file);
+
+						if($attchContent.find(".row").length === 0) {
+							$attchContent.html("");
+						}
+						$attchContent.append(temStr);
+						// alert(temStr);
+						canSelect = false;
+						api.ajax({
+							url: Quickos.api.url('main/attach/uploadfile'),
+							//先等它100s
+							timeout: 100,
+							data: {
+								values: {
+									model: 'workflow',
+									uid: $api.getUid()
+								},
+								files: {
+									Filedata: filePath
+								}
+							},
+							report: true,
+							dataType: 'json',
+							method: 'post'
+						}, function(ret, err) {
+							if(ret.status == 0) {
+								$("#fileUploadItem" + uploadNumber).css({
+									"width": ret.progress + "%"
+								});
+							}
+							if(ret.status == 1) {
+
+								var nameArr = ret.body.data.name.split(".");
+								var aid = ret.body.data.aid,
+									filetype = nameArr[nameArr.length - 1],
+									downurl = "/" + ret.body.data.url,
+									filename = ret.body.data.name;
+								$("#fileUploadItem" + uploadNumber).css({
+									"background-color": "#348942"
+								});
+								$("#rm_fileUploadItem" + uploadNumber).attr("data-remove", aid);
+
+								$("#see_fileUploadItem" + uploadNumber).css("display", "block");
+
+								$("#see_fileUploadItem" + uploadNumber).attr("data-aid", aid);
+								$("#see_fileUploadItem" + uploadNumber).attr("data-filetype", filetype);
+								$("#see_fileUploadItem" + uploadNumber).attr("data-downurl", downurl);
+								$("#see_fileUploadItem" + uploadNumber).attr("data-filename", filename);
+								//是否可点击上传按钮，for 重复
+								canSelect = true;
+								uploadNumber++;
+								//添加附件个数
+								$("#attach-count").text(parseInt($("#attach-count").text()) + 1);
+								//vic
+								if(type == 'pub') {
+									var origAttachmentid = $("[name='attachmentid']").val();
+									//添加附件id
+									var targetAttachmentid = origAttachmentid + "," + aid;
+									$("[name='attachmentid']").val(targetAttachmentid);
+								} else {
+									//添加参阅附件id
+									var origReadid = $("[name='readattachmentid']").val();
+									var targetReadid = origReadid + "," + aid;
+									$("[name='readattachmentid']").val(targetReadid);
+								}
+							}
+							if(ret.status == 2) {
+
+								canSelect = true;
+								$("#fileUploadItem" + uploadNumber).parent().remove();
+							}
+						});
+					})
+				} else {
+					api.toast({
+						msg: "请等待最近的附件上传完毕",
+						duration: 2000
+					});
+				}
+			};
+
+			//删除公共附件
+			removeUploadItem = function(that) {
+				var $this = $(that);
+				if(canSelect) {
+					$.confirm('您是否要删除附件?', '提示', function() {
+						var removeId = $this.attr("data-remove");
+
+						var origAttachmentid = $("[name='attachmentid']").val();
+
+						var origAttachmentIdArr = origAttachmentid.split(",");
+
+						for(var x in origAttachmentIdArr) {
+							if(removeId == origAttachmentIdArr[x]) {
+								origAttachmentIdArr.splice(x, 1);
+							}
+						}
+						$("[name='attachmentid']").val(origAttachmentIdArr.join(","));
+						$this.parent().parent().remove();
+						$("#attach-count").text(parseInt($("#attach-count").text()) - 1);
+						if($("#commonAttach").find(".row").length === 0) {
+							$("#commonAttach").html('<div style="width:100%;height:40px;text-align:center;">\n' +
+								'                                        <img style="display:inline-block;height:70%;" src="../image/noContent_yet.png">\n' +
+								'                                    </div>')
+						}
+					});
+				}
+			}
+
+			//删除参阅附件
+			removeReadUploadItem = function(that) {
+				var $this = $(that);
+				if(canSelect) {
+					$.confirm('您是否要删除附件?', '提示', function() {
+						var removeId = $this.attr("data-remove");
+
+						var origAttachmentid = $("input[name='readattachmentid']").val();
+
+						var origAttachmentIdArr = origAttachmentid.split(",");
+
+						for(var x in origAttachmentIdArr) {
+							if(removeId == origAttachmentIdArr[x]) {
+								origAttachmentIdArr.splice(x, 1);
+							}
+						}
+						$("input[name='readattachmentid']").val(origAttachmentIdArr.join(","));
+						$this.parent().parent().remove();
+						$("#attach-count").text(parseInt($("#attach-count").text()) - 1);
+						if($("#readAttach").find(".row").length === 0) {
+							$("#readAttach").html('<div style="width:100%;height:40px;text-align:center;">\n' +
+								'                                        <img style="display:inline-block;height:70%;" src="../image/noContent_yet.png">\n' +
+								'                                    </div>')
+						}
+					});
+				}
+			}
+
+			//表单初始化
+			function initValue() {
+				if($("#hostButton").length > 0) {
+
+				} else {
+					$("#doForm").css("pointerEvents", "none")
+				}
+				//				console.log(JSON.stringify($('img')))
+				var imgupload = document.querySelectorAll("[data-item='imgupload2']")
+				for(var i = 0; i < imgupload.length; i++) {
+					var tpl = '<span class="imgupload" data-click="imgupload2" >' +
+						'<img src="/static/8151b9f0/image/pic_upload.png" alt="" id="imgPstamp" style="width:100%"/>' +
+						'<span></span>' +
+						'</span>';
+					//		        console.log(JSON.stringify(val))
+					imgupload[i].innerHTML = imgupload[i].innerHTML + tpl;
+				}
+				//			console.log($("[data-item='imgupload2']").eq(0).html());
+				$("[data-select-type='department'],[data-select-type='user']").not(".selectSign").each(function() {
+					var valueStr = $(this).find("input").val();
+					var valueArr = valueStr.split(",");
+					var renderArr = [];
+					var renderItemObj = {};
+					var type = $(this).attr("data-select-type");
+					//遍历处理渲染的数据
+					for(var x = 0; x < valueArr++; x++) {
+						//干掉u_
+						var id = valueArr[x].substr(2);
+						if(type === "department") {
+							if(Ibos.data.department[valueArr[x]]) {
+								var depname = Ibos.data.department[valueArr[x]].text;
+								renderItemObj = {
+									depid: id,
+									depname: depname
+								}
+
+							}
+
+						} else if(type === "user") {
+							if(Ibos.data.user[valueArr[x]]) {
+								var realname = Ibos.data.user[valueArr[x]].text;
+								renderItemObj = {
+									uid: id,
+									realname: realname
+								}
+							}
+
+						}
+						renderArr.push(renderItemObj);
+					}
+					//渲染默认值
+					var tpl;
+					if(type === "department") {
+						tpl = WorkFlowTemplate.selectDepItemTpl();
+					} else if(type === "user") {
+						tpl = WorkFlowTemplate.selectUserItemTpl();
+					}
+					//初始化插件选择的值
+					var dataSelected = JSON.stringify(renderArr);
+					$(this).attr("data-selected", dataSelected);
+
+					var tem = doT.template(tpl);
+
+					var temStr = tem(renderArr);
+
+					var name = $(this).find("input").attr("name");
+					$("#" + name).html(temStr);
+				});
+
+				var size = $('b[data-type="signimg"]').size();
+				for(var i = 0; i < size; i++) {
+					var text = $('b[data-type="signimg"]').eq(i).text();
+					if(text.length > 23) {
+						$('b[data-type="signimg"]').eq(i).text("");
+						var imgUrl=$api.getIp()+text.match(/.(\S*)/)[1]
+						$('b[data-type="signimg"]').eq(i).append("<img data-type='signimg' src='" + imgUrl + "' style='width:100%'/>");
+						//          		$('img[data-type="signimg"]').eq(i).attr({"src":text});
+					}
+				}
+				//          $('b[data-type="signimg"]').eq(0).replaceWith('<div style="margin:0.5rem;" class="button button-fill" onclick="openSelectPstamp()"><img src="" name="siginimg"/>选择签章</div>')
+				//          $('img[data-type="signimg"]').eq(i).attr({"src":text});
+
+				//				          console.log($("#content").html());
+			}
+			//打开关联工作详情
+			openWorkflowDetail = function(that) {
+				var key = $(that).attr("data-key");
+				api.openWin({
+					name: "workflowDetail",
+					url: "./workflow-detail.html",
+					pageParam: {
+						key: key,
+						closeToWin: "workflowDocFawen"
+					}
+				});
+			};
+
+			//上传完毕后查看附件
+			watchFile = function(that) {
+				$this = $(that);
+				var aid = $this.attr("data-aid"),
+					filetype = $this.attr("data-filetype"),
+					downurl = $this.attr("data-downurl"),
+					filename = $this.attr("data-filename");
+				$api.openAttchFile(aid, filetype, downurl, filename);
+			};
+			//删除原有的附件
+
+			deleteAttach = function(that, aid) {
+				$.confirm("您确定要删除附件吗？", "提示", function() {
+					if(runid) {
+						var $that = $(that);
+						var url = Quickos.api.url("workflow/handle/delattach&runid=" + runid + "&aid=" + aid + "&attachtype=0");
+						Quickos.api.get(url, function(ret, err) {
+							if(ret.isSuccess) {
+								var attachmentValue = $("input[name='attachmentid']").val();
+								//删除特定attachmentid
+								attachmentValue = $api.removeItemFromStr(attachmentValue, aid + "");
+								$("input[name='attachmentid']").val(attachmentValue);
+								//附件数量
+								var attachCount = parseInt($("#attach-count").text()) - 1;
+								$("#attach-count").text(attachCount + "");
+
+								//清除dom
+								$that.parents(".attch-item").remove();
+								if($("#commonAttach").find(".row").length === 0) {
+									$("#commonAttach").html('<div style="width:100%;height:40px;text-align:center;">\n' +
+										'                                        <img style="display:inline-block;height:70%;" src="../image/noContent_yet.png">\n' +
+										'                                    </div>')
+								}
+								api.toast({
+									msg: "删除成功",
+									duration: 2000
+								});
+							} else {
+								api.toast({
+									msg: "删除失败",
+									duration: 2000
+								});
+							}
+						});
+					}
+				});
+			};
+			//删除原有的参阅附件
+			deleteReadAttach = function(that, aid) {
+				$.confirm("您确定要删除附件吗？", "提示", function() {
+					if(runid) {
+						var $that = $(that);
+						var url = Quickos.api.url("workflow/handle/delattach&runid=" + runid + "&aid=" + aid + "&attachtype=1");
+						Quickos.api.get(url, function(ret, err) {
+
+							if(ret.isSuccess) {
+								var attachmentValue = $("input[name='readattachmentid']").val();
+								//删除特定attachmentid
+								attachmentValue = $api.removeItemFromStr(attachmentValue, aid + "");
+
+								$("input[name='readattachmentid']").val(attachmentValue);
+								//附件数量
+								var attachCount = parseInt($("#attach-count").text()) - 1;
+								$("#attach-count").text(attachCount + "");
+								//清除dom
+								$that.parents(".attch-item").remove();
+
+								if($("#readAttach").find(".row").length === 0) {
+									$("#readAttach").html('<div style="width:100%;height:40px;text-align:center;">\n' +
+										'                                        <img style="display:inline-block;height:70%;" src="../image/noContent_yet.png">\n' +
+										'                                    </div>')
+								}
+								api.toast({
+									msg: "删除成功",
+									duration: 2000
+								});
+							} else {
+								api.toast({
+									msg: "删除失败",
+									duration: 2000
+								});
+							}
+						});
+					}
+				});
+			};
+			//打开弹出层
+			openPopup = function(cls) {
+				Popup.init();
+				Popup.showPopUp(cls);
+				//$.popup('.'+cls);
+			};
+
+			//展开控件项详情f
+			$(document).on("click", ".list-view-item", function() {
+				var target = $(this).attr("data-toggle");
+				$(this).next().find("." + target).toggleClass("list-view-sub-active");
+			});
+
+			//删除列表控件项
+			removeListviewItem = function(that) {
+				var $that = $(that),
+					target = $that.parents(".list-view-item"),
+					targetSubitem = target.nextAll("." + target.attr("data-toggle"));
+				target.remove();
+				targetSubitem.remove();
+
+			};
+			//添加列表项
+			addListItem = function(that, id, contentId) {
+				var $that = $(that),
+					obj = {
+						list: {},
+						type: {},
+						listviewtitle: "",
+						colvalue: {},
+						sumflag: JSON.parse($that.attr("data-sumflag"))
+					},
+					//获取列表控件表单字段
+					listviewTitle = $that.attr("data-title");
+				obj["listviewtitle"] = listviewTitle;
+				$("#" + id + " .lv-add-input").each(function() {
+					var name = $(this).attr("data-name");
+					if(name !== '序号') {
+						var valuetype = $(this).attr("data-type"),
+							colvalue = $(this).attr("data-colvalue"),
+							itemvalue = "";
+						if($(this).attr("data-input-type") && $(this).attr("data-input-type") === "checkbox") {
+							var itemArr = [];
+							$(this).find(".checkbox-input").each(function() {
+								if($(this).is(":checked")) {
+									itemArr.push($(this).val());
+								}
+							});
+							itemvalue = itemArr.join(",");
+						} else if($(this).val()) {
+							itemvalue = $(this).val();
+						} else if($(this).text()) {
+							itemvalue = $(this).text();
+						}
+						obj["list"][name] = itemvalue;
+						obj["type"][name] = valuetype;
+						obj["colvalue"][name] = colvalue ? colvalue : {};
+					}
+				});
+				var targetListViewItem = $("#listview" + contentId + ">ul>.list-view-item").last(),
+					nowListViewNo = 0;
+				if(targetListViewItem.length > 0) {
+					//序号
+					nowListViewNo = targetListViewItem.attr("data-no");
+				}
+
+				var tem = doT.template(WorkFlowTemplate.listViewItemTpl());
+
+				obj["list"]["no"] = (parseInt(nowListViewNo) + 1) + "";
+
+				var temStr = tem(obj);
+
+				$("#listview" + contentId + ">ul").append(temStr);
+				//事件绑定
+				//列表控件选人控件绑定
+				$(".listview-select-user").userSelect({
+						type: "user",
+						mul: true
+					},
+					function(data) {
+						var contentDom = $("#" + $(this).attr("data-content-id")),
+							inputDom = $("#" + $(this).attr("data-input-id"));
+
+						var tem = doT.template(WorkFlowTemplate.selectUserItemTpl());
+						var temStr = tem(data);
+						contentDom.html(temStr);
+						inputDom.val(WorkFlow.handleData(data));
+					});
+				//列表控件选部门控件绑定
+				$(".listview-select-department").userSelect({
+					type: "department",
+					mul: true
+				}, function(data) {
+					var contentDom = $("#" + $(this).attr("data-content-id")),
+						inputDom = $("#" + $(this).attr("data-input-id"));
+					var tem = doT.template(WorkFlowTemplate.selectDepItemTpl());
+					var temStr = tem(data);
+					contentDom.html(temStr);
+					inputDom.val(WorkFlow.handleData(data));
+				});
+				//删除列表控件选择的用户
+				$(document).off("click", ".lv-selected-item-content .select-item").on("click", ".lv-selected-item-content .select-item", function() {
+					var btnDom, targetDom;
+
+					btnDom = $("#" + $(this).parent().attr("data-btn-id"));
+					targetDom = $("#" + $(this).parent().attr("data-target-id"));
+
+					var removeId = $(this).attr("data-id");
+
+					var selectedStr = btnDom.attr("data-selected");
+
+					var selectedObj = JSON.parse(selectedStr);
+
+					selectedObj = WorkFlow.removeItemById(removeId, selectedObj);
+
+					//给input赋选择的值
+					targetDom.val(WorkFlow.handleData(selectedObj));
+
+					selectedStr = JSON.stringify(selectedObj);
+
+					//初始化选择器的值
+					btnDom.attr("data-selected", selectedStr);
+					$(this).remove();
+				});
+				//列表控件选时间事件绑定
+				$(".workflow-listview-datepicker input").each(function() {
+					if(!$(this).attr("data-hasbind") || $(this).attr("data-hasbind") !== "1") {
+						var $that = $(this),
+							format = $that.attr("data-format"),
+							inputValue = $that.val();
+						var dateObj = getFormatDateArr(inputValue);
+
+						if(format === "date") {
+							var temObj = {
+								formatValue: function(p, values, displayValues) {
+									return displayValues[0] + '-' + values[1] + '-' + values[2] + ' ' + values[3] + ':' + values[4];
+								}
+							};
+							if(inputValue) {
+								temObj["value"] = [dateObj.year, dateObj.month, dateObj.day, dateObj.hour, dateObj.mintues];
+							}
+							$that.datetimePicker(temObj);
+						} else if(format === "date(yyyy)") {
+							var temObj = {
+								dateFormat: "yyyy",
+							};
+							if(inputValue) {
+								temObj["value"] = [dateObj.year + "-01-01"];
+							}
+							$that.calendar(temObj);
+						} else if(format === "date(yyyy-mm)") {
+							var temObj = {
+								dateFormat: "yyyy-mm"
+							};
+							if(inputValue) {
+								temObj["value"] = [dateObj.year + "-" + dateObj.month + "-01"];
+							}
+							$that.calendar(temObj);
+						} else if(format === "date(yyyy-mm-dd)") {
+							var temObj = {
+								dateFormat: "yyyy-mm-dd"
+							};
+							if(inputValue) {
+								temObj["value"] = [dateObj.year + "-" + dateObj.month + "-" + dateObj.day];
+							}
+							$that.calendar(temObj);
+						} else if(format === "date(yyyy-mm-dd hh)") {
+							var temObj = {
+								formatValue: function(p, values, displayValues) {
+									return displayValues[0] + '-' + values[1] + '-' + values[2] + ' ' + values[3];
+								}
+							};
+							if(inputValue) {
+								temObj["value"] = [dateObj.year, dateObj.month, dateObj.day, dateObj.hour, "00"];
+							}
+							$that.datetimePicker(temObj);
+						} else if(format === "date(yyyy-mm-dd hh:ii)") {
+
+							var temObj = {
+								formatValue: function(p, values, displayValues) {
+									return displayValues[0] + '-' + values[1] + '-' + values[2] + ' ' + values[3] + ':' + values[4];
+								}
+							};
+							if(inputValue) {
+								temObj["value"] = [dateObj.year, dateObj.month, dateObj.day, dateObj.hour, dateObj.mintues];
+							}
+							$that.datetimePicker(temObj);
+						} else {
+							$that.datetimePicker({});
+						}
+						//添加已经绑定时间控件事件标识
+						$that.attr("data-hasbind", "1");
+					}
+				});
+
+			};
+
+			//获取列表控件中的值
+			getListviewValue = function() {
+				$(".list-view-content").each(function() {
+					var resultArr = [],
+						inputDom = $(this).find(".origin-value");
+					$(this).find(".list-view-item").each(function() {
+						var targetDom = $(this).next().find("." + $(this).attr("data-toggle")),
+							temObj = {},
+							listviewTitleArr = $(this).attr("data-title").split("`");
+						targetDom.each(function() {
+							var $formInputDom = $(this).find(".selected-item-input");
+							var listviewItemValue = "",
+								listviewItemName = $formInputDom.attr("data-name");
+							if($formInputDom.val()) {
+								listviewItemValue = $formInputDom.val();
+							} else if($formInputDom.text()) {
+								listviewItemValue = $formInputDom.text();
+							}
+							if($formInputDom.attr("data-type") === "checkbox") {
+								var checkboxArr = [];
+								$formInputDom.find('[name="' + listviewItemName + '"]').each(function() {
+									if($(this).is(":checked")) {
+										checkboxArr.push($(this).val());
+									}
+								});
+								temObj[listviewItemName] = checkboxArr.join(",");
+							} else {
+								temObj[listviewItemName] = listviewItemValue;
+							}
+						});
+						resultArr.push(protectSortForListview(listviewTitleArr, temObj));
+					});
+
+					inputDom.val(resultArr.join("`\r\n"));
+				});
+			};
+			//保证顺序正确
+			protectSortForListview = function(sortArr, shouldSortObj) {
+				var temarr = [];
+				for(var x = 0; x < sortArr.length; x++) {
+					temarr.push(shouldSortObj[sortArr[x]]);
+				}
+				return temarr.join("`");
+			};
+
+			//计算总数
+			calSum = function() {
+				$("input[data-sum]").each(function() {
+					var param = $(this).attr("data-sum"),
+						sum = 0;
+					$("[data-sum-param='" + param + "']").each(function() {
+						var paramValue = 0;
+						if($(this).val()) {
+							paramValue = parseFloat($(this).val()) ? parseFloat($(this).val()) : 0;
+						} else {
+							paramValue = parseFloat($(this).text()) ? parseFloat($(this).text()) : 0;
+						}
+						sum += paramValue;
+					});
+					if($(this).val()) {
+						$(this).val(sum);
+					} else {
+						$(this).text(sum);
+					}
+				});
+			};
+
+			$(document).on("change", "input[data-sum-param]", function() {
+				calSum();
+			});
+		};
+
+		//  会议控件
+
+		// var mid = ""; //创建mid(已预定会议室的事件id)
+		// var roomid = ""; //创建(会议室的id)
+		// var runid = ""; //创建(流程表单runid),
+		// $("select#roomid").change(function() {
+		// 	// 选择会议室地点获取id;
+		// 	roomid = this.value;
+		// 	checktime();
+		// });
+		// 会议-安排-控件(点击事件)
+		showMeetItem = function showMeetItem(that) {
+			runid = $(that).attr("data-runid"); //获取runid
+			mid = $("#meeting_id_" + runid).val(); //获取mid
+			var RoomListurl = Quickos.api.url("mobile/meeting/GetMeetingRoomList"); //会议地点接口
+			Quickos.api.get(RoomListurl, function(ret, err) //访问接口
+				{
+					if(ret.isSuccess) {
+						$('#roomid').html(" ");
+						var RoomLislength = ret.data.length;
+						var str = '<option>请选择会议地点</option>';
+						for(var i = 0; i < RoomLislength; i++) {
+							str += '<option  value="' + ret.data[i].id + '">' + ret.data[i].name + '</option>';
+						}
+						$('#roomid').append(str);
+					}
+				});
+			if(!mid == " ") {
+				var midurl = Quickos.api.url("mobile/meeting/GetMeetingInfo") + "&mid=" + mid; //会议地点接口
+				Quickos.api.get(midurl, function(ret, err) //访问接口
+					{
+
+						if(ret.isSuccess) {
+							$('#suremeetingtext').text("修改");
+							$("select#roomid").val(ret.data.roomid);
+							roomid = ret.data.roomid;
+							$("#begin").val(ret.data.begin);
+							$("#end").val(ret.data.end);
+							$("#name").val(ret.data.name);
+							// 时间选择器
+
+							if($("#begin").val() == "") {
+
+							} else {
+								$("#begin").datetimePicker({
+									value: ret.beginarr
+								});
+
+								//会议结束时间获取时间选择器
+
+								$("#end").datetimePicker({
+									value: ret.endarr
+								});
+							}
+
+						}
+					});
+			} else {
+				gettime();
+			}
+
+			Popup.init();
+			Popup.showPopUp("pop-meeting-anpai");
+
+		}
+		//一个获取时间的方法
+		function gettime() {
+			var myDate = new Date();
+			//获取当前年
+			var nowyear = myDate.getFullYear();
+			//获取当前月
+			var nowmonth = myDate.getMonth() + 1;
+			var nowdate = myDate.getDate();
+			var nowh = myDate.getHours(); //获取当前小时数(0-23)
+			var nowm = myDate.getMinutes(); //获取当前分钟数(0-59)
+			var nows = myDate.getSeconds();
+			//会议开始时间获取时间选择器
+			$("#begin").datetimePicker({
+				value: [nowyear, nowmonth, nowdate, nowh, nows]
+			});
+
+			//会议结束时间获取时间选择器
+
+			$("#end").datetimePicker({
+				value: [nowyear, nowmonth, nowdate, nowh, nows]
+			});
+		}
+
+		var timeok = ""; //创建当前时间是否可以预约的状态
+		//会议时间选择失去焦点后判断当前时间是否符合可申请时间
+		function checktime() {
+			var checktimeurl = Quickos.api.url("mobile/meeting/meetinTplCheckTime"); //会议时间判断接口
+			postdata = {
+				starttime: $('#begin').val(),
+				endtime: $('#end').val(),
+				mid: mid,
+				roomid: roomid
+			};
+
+			Quickos.api.post(checktimeurl, postdata, function(ret, err) //访问接口
+				{
+					timeok = ret.isSuccess; //获取当前时间是否可以预约的状态
+					if(ret.isSuccess) {
+						$('#checttimejieguo').text(ret.msg)
+						$('#checttimejieguo').css("color", "green")
+					} else {
+						$('#checttimejieguo').text(ret.msg)
+						$('#checttimejieguo').css("color", "red")
+					}
+
+				});
+		}
+
+		// 提交会议安排
+		suremeeting = function suremeeting() {
+			if($('#name').val() == "") {
+				api.toast({
+					msg: "请输入会议名称",
+					duration: 2000
+				});
+			} else if(timeok == false) {
+				api.toast({
+					msg: "当前时间不可预约",
+					duration: 2000
+				});
+			} else {
+				var suremeetingurl = Quickos.api.url("mobile/meeting/Addmeetapply"); //会议时间判断接口
+				postdata = {
+					begin: $('#begin').val(),
+					end: $('#end').val(),
+					mid: mid,
+					roomid: roomid,
+					name: $('#name').val(),
+					runid: runid
+				};
+
+				Quickos.api.post(suremeetingurl, postdata, function(ret, err) //访问接口
+					{
+						if(ret.isSuccess) {
+							api.toast({
+								msg: ret.msg,
+								duration: 2000
+							});
+							Popup.init();
+							Popup.hiddenPopUp("pop-meeting-anpai");
+							$("#meeting_id_" + runid).val(ret.data.mid);
+							publish();
+							//  location.reload(3000);
+							setTimeout('location.reload()', 2000);
+						} else {
+
+						}
+
+					});
+			}
+		}
+	</script>
+
+</html>

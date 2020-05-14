@@ -1,0 +1,63 @@
+/*基础模块图标*/
+[class^='module-icon-']
+{
+    display:inline-block;
+    width:30px;
+    height:30px;
+    background-size:cover;
+    background-position:center;
+    vertical-align: middle;
+}
+/*待办*/
+.module-icon-wait
+{
+    background-image:url(../image/index/wait.png) !important;
+}
+/*公告*/
+.module-icon-article
+{
+    background-image:url(../image/index/article.png) !important;
+}
+/*发文*/
+.module-icon-fawen
+{
+    background-image:url(../image/index/fawen.png) !important;
+}
+/*收文*/
+.module-icon-shouwen
+{
+    background-image:url(../image/index/shouwen.png) !important;
+}
+/*会议*/
+.module-icon-meeting
+{
+    background-image:url(../image/index/meeting.png) !important;
+}
+/*工资*/
+.module-icon-gonzi
+{
+    background-image:url(../image/index/gonzi.png) !important;
+}
+/*排班*/
+.module-icon-paiban
+{
+    background-image:url(../image/index/paiban.png) !important;
+}
+/*日程*/
+.module-icon-richeng
+{
+    background-image:url(../image/index/richeng.png) !important;
+}
+/*请假*/
+.module-icon-leave
+{
+    background-image:url(../image/index/leave.png) !important;
+}
+/*邮箱*/
+.module-icon-email
+{
+    background-image:url(../image/index/email.png) !important;
+}
+
+
+

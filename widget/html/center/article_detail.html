@@ -1,0 +1,213 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>通知公告</title>
+		<link rel="stylesheet" href="../../css/api.css">
+		<link rel="stylesheet" href="../../css/public.css">
+		<style media="screen">
+			body,
+			html {
+				width: 100%;
+				height: 100%;
+				background-color: #F0F0F4;
+			}
+
+			.article-box {
+				padding: 15px;
+			}
+
+			.article-title {
+				padding: 20px;
+				background-color: #FFFFFF;
+				margin-bottom: 8px;
+				border-radius: 3px;
+			}
+
+			.article-main {
+				background-color: #FFFFFF;
+				padding: 20px;
+				border-radius: 3px;
+				font-size: 16px;
+				font-weight: 400;
+			}
+
+			.article-main .content {
+				border-bottom: 2px solid #E32416;
+				margin-bottom: 10px;
+			}
+
+			.article-main .content div {
+				margin-bottom: 10px;
+			}
+
+			.article-main .doc-files div {
+				margin-bottom: 10px;
+			}
+
+			.title-name {
+				color: #333333;
+				font-size: 16px;
+				font-weight: bold;
+				margin-bottom: 10px;
+			}
+
+			.article-author {
+				color: #333333;
+				font-size: 16px;
+				font-weight: 400;
+				margin: 10px 0px;
+			}
+
+			.article-date {
+				color: #666666;
+				font-size: 14px;
+				font-weight: 400;
+				margin-top: 10px;
+			}
+
+			#files-address {
+				word-break: break-all;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="article-box">
+			<div class="article-title">
+				<div class="title-name">
+					<span id="title">
+
+					</span>
+				</div>
+				<div class="article-author">
+					<span id="">
+						发布人：
+					</span>
+					<span id="name">
+
+					</span>
+				</div>
+				<div class="article-date">
+					<span id="">
+						发布时间：
+					</span>
+					<span id="date">
+
+					</span>
+				</div>
+			</div>
+			<div class="article-main">
+				<div class="content">
+					<div id="">
+						内容：
+					</div>
+					<div id="content-detail">
+
+					</div>
+				</div>
+				<div class="doc-files">
+					<div id="">
+						附件区
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery.min.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			listenCloseAjax();
+			var articleId = api.pageParam.articleId
+			var uid = JSON.parse(localStorage.getItem("userinfo")).uid
+			var post_data = {
+				aid: articleId,
+				uid: uid
+			};
+
+			//设置状态为已读
+			var readUrl = host + 'mobile/article/setIsRead'
+			$.post(readUrl, post_data, function(ret) {
+			})
+
+			//获取公告详情
+			var dataUrl = host + 'mobile/article/GetArtDetail';
+			var files_list = '<div id="">' +
+				'<span id="">' +
+				'附件名称：' +
+				'</span>' +
+				'<span id="files-name">' +
+
+				'</span>' +
+				'</div>' +
+				'<div id="">' +
+				'<span id="">' +
+				'下载地址：' +
+				'</span>' +
+				'<span id="files-address">' +
+				'<a class="attachment" data-path=""></a>' +
+				'</span>' +
+				'</div>'
+			files_list = $(files_list)
+			$.get(dataUrl, post_data, function(res) {
+				//				console.log(JSON.stringify(res.data))
+				var data = res.data
+				$("#title").text(data.subject)
+				$("#name").text(data.author)
+				$("#date").html(data.addtime)
+				$("#content-detail").html(data.content)
+				if(data.attach) {
+					var attachments = data.attach;
+					for(var item in attachments) {
+						var name = attachments[item].filename;
+						var path = attachments[item].attachment;
+						var realPath = host_ + '/data/attachment/' + path
+						var files = files_list.clone()
+						files.find("#files-name").text(name)
+						files.find("#files-address a").text(name)
+						files.find("#files-address a").attr("data-path", realPath)
+						$(".doc-files").append(files);
+					}
+				}
+			})
+			//附件下载并打开
+			$(".doc-files").on("click", ".attachment", function() {
+				var path = $(this).attr("data-path");
+				var filename = $(this).text();
+				api.download({
+					url: path,
+					report: true,
+					cache: true,
+					allowResume: true
+				}, function(ret, err) {
+					console.log(JSON.stringify(ret))
+					if(ret.state == 1) {
+						api.toast({
+							msg: '下载成功，正在打开',
+						});
+						var docInteraction = api.require('docInteraction');
+						docInteraction.open({
+							path: ret.savePath
+						}, function(ret, err) {
+							if(err) {
+								api.toast({
+									msg: '打开文件成功'
+								});
+							} else {
+								api.toast({
+									msg: '打开文件失败'
+								});
+							}
+						});
+					} 
+				});
+			})
+		};
+	</script>
+
+</html>

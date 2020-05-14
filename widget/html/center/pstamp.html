@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>我的签章</title>
+		<link rel="stylesheet" href="../../css/api.css">
+		<link rel="stylesheet" href="../../css/public.css">
+		<style media="screen">
+			body,
+			html {
+				width: 100%;
+				height: 100%;
+				background-color: #F0F0F4;
+			}
+
+			.pstamp_list img {
+				height: 80px;
+				margin-left: 20px;
+			}
+
+			.pstamp_list {}
+
+			.pstamp_detail {
+				display: flex;
+				flex-flow: row;
+				align-items: center;
+				background: #fff;
+				padding: 20px;
+				border-bottom:1px solid #F0F0F4
+			}
+			.empty img {
+				display: block;
+				margin: 20px auto;
+				width: 100px;
+				margin-top: 30px
+			}
+
+			.empty div {
+				color: #8A8A8A;
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="pstamp">
+			<div class="pstamp_list">
+				<!--<div class="item-media"><i class="icon icon-form-checkbox"></i></div>-->
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery.min.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			listenCloseAjax();
+
+			//更新页面事件监听
+			api.addEventListener({
+				name: "init-psatmp-list"
+			}, function() {
+				location.reload();
+			});
+			var param=api.pageParam;
+
+			//请求签章列表
+			// var pstamp_list = '<div class="pstamp_detail">' +
+			// 	'<input type="radio" name="selected-phrasebook" value="" class="selected-pstamp">' +
+			// 	'<img src="http://192.168.51.125/pc_test/data/pstamp/1550314660" class="pstampImg"/>' +
+			// 	'</div> '
+			var empty_tpl='<div class="empty"><img src="../../image/noContent_yet.png" alt=""><div>暂无签章</div></div>';
+			empty_tpl=$(empty_tpl);
+			var pstamp_list = '<div class="pstamp_detail">' +
+				'<div class="radio"></div>' +
+				'<img src="http://192.168.51.125/pc_test/data/pstamp/1550314660" class="pstampImg"/>' +
+				'</div> ';
+			pstamp_list = $(pstamp_list);
+
+			$.get(host + "mobile/pstamp/getpstamp", {}, function(res) {
+				//				console.log(JSON.stringify(res))
+				if(res.data.length == 0) {
+					$("#pstamp").append(empty_tpl);
+					return false;
+				}
+				res.data.forEach(function(value, index, array) {
+//					console.log(JSON.stringify(value))
+					var pstamp = pstamp_list.clone();
+					pstamp.attr("data-src",value.url);
+					var imgUrl=host_+value.url.match(/.(\S*)/)[1]
+					pstamp.find(".pstampImg").attr("src", imgUrl);
+					pstamp.find(".radio").attr("data-id",value.phrasedesc);
+					if(param.type!="select"){
+						pstamp.find(".radio").css("display","none")
+					}
+					$(".pstamp_list").append(pstamp);
+				})
+			})
+
+			$(".pstamp_list").on("click",".pstamp_detail",function(){
+				$(".pstamp_list .radio").removeClass("radio_selected")
+				$(this).find(".radio").addClass("radio_selected")
+
+				if(param.type=="select"){
+					api.sendEvent({
+						name: 'selectpstamp',
+						extra: {
+							pstampbook: $(this).attr("data-src"),
+							page: param.page
+						}
+					});
+					setTimeout(function(){
+						api.closeWin();
+					},100)
+
+				}
+			})
+
+
+
+		};
+	</script>
+
+</html>

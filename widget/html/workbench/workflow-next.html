@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/oldCss/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/oldCss/style.css" />
+		<link rel="stylesheet" href="../../css/oldCss/sm.css">
+		<link rel="stylesheet" href="../../css/oldCss/sm-extend.css">
+		<link rel="stylesheet" href="../../css/oldCss/add-css.css">
+		<link rel="stylesheet" href="../../css/oldCss/userSelect.css">
+		<link rel="stylesheet" href="../../css/oldCss/font-face.css">
+		<link rel="stylesheet" href="../../script/oldJs/TimeTree/timeTree.css">
+		<style>
+			input,
+			textarea {
+				border: 1px solid #a9a9a9 !important;
+				width: 100% !important;
+				margin: 10px !important;
+			}
+
+			.select-item-content {
+				padding: 15px;
+			}
+
+			.select-item-content {
+				border-left: 1px dotted #E32416;
+				border-right: 1px dotted #E32416;
+				border-bottom: 1px dotted #E32416;
+				margin: 15px !important;
+			}
+
+			.select-item-content .select-item {
+				background-color: #E32416;
+				color: white;
+				padding: 2px 30px;
+				display: inline-block;
+				position: relative;
+				margin-top: 3px;
+			}
+
+			.select-item-content .select-item:after {
+				content: '×';
+				position: absolute;
+				right: 4px;
+				vertical-align: middle;
+				display: inline-block;
+			}
+
+			.userselect input {
+				visibility: hidden;
+			}
+
+			footer {
+				width: 100%;
+				height: 50px;
+				position: fixed;
+				bottom: 0;
+				background-color: white;
+				line-height: 50px;
+				text-align: center;
+				color: #E32416;
+				box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+			}
+
+			.content {
+				padding-bottom: 2rem;
+			}
+
+			.working-step-no {
+				display: inline-block;
+				position: relative;
+				height: 25px;
+				min-width: 25px;
+				background-color: #df2a39;
+				border-radius: 3px;
+				vertical-align: middle;
+				margin-left: 5px;
+				margin-right: 5px;
+				text-align: center;
+				line-height: 25px;
+				color: white;
+				padding: 0 5px;
+			}
+
+			.working-step {
+				display: inline-block;
+				position: relative;
+				height: 25px;
+				min-width: 25px;
+				background-color: #E32416;
+				border-radius: 3px;
+				vertical-align: middle;
+				margin-left: 5px;
+				margin-right: 5px;
+				text-align: center;
+				line-height: 25px;
+				color: white;
+				padding: 0 5px;
+			}
+
+			.working-step:after {
+				content: "";
+				display: block;
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 50%;
+				background-color: rgba(242, 244, 247, 0.2);
+			}
+
+			.hidden {
+				display: none;
+			}
+
+			.list-block .item-title.label {}
+
+			.list-block .item-block {
+				width: 100%;
+			}
+
+			.list-block .item-inner .item-title.label {
+				color: gray;
+			}
+
+			.list-block .item-block .item-title {
+				padding-left: 0;
+			}
+
+			.list-block .item-block .item-title.label {
+				margin: 20px 0 20px 0;
+				width: 100%;
+				padding-left: 0;
+				color: gray;
+			}
+
+			.list-block .item-block .item-input {
+				width: 100%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="bar bar-nav">
+			<a class="icon pull-left backbtn" href="javascript:;" onclick="api.closeWin();"></a>
+			<span class="pull-left" onclick="api.closeWin()" style="z-index: 2;position:relative;">工作办理</span>
+			<h1 class='title'>转交下一步</h1>
+		</header>
+		<div class="content">
+			<form id="form_data">
+				<div id="content">
+
+				</div>
+			</form>
+		</div>
+		<footer onclick="publish()">
+			确定
+		</footer>
+
+	</body>
+	<script type="text/javascript" src="../../script/oldJs/api.js"></script>
+	<script type='text/javascript' src='../../script/oldJs/zepto.min.js' charset='utf-8'></script>
+	<script type='text/javascript' src='../../script/oldJs/sm.js' charset='utf-8'></script>
+	<script type="text/javascript" src="../../script/oldJs/quickos.js"></script>
+	<script type='text/javascript' src='../../script/oldJs/sm-extend.min.js' charset='utf-8'></script>
+	<script type='text/javascript' src='../../script/oldJs/doT.min.js' charset='utf-8'></script>
+	<script type='text/javascript' src='../../script/oldJs/userSelect.js' charset='utf-8'></script>
+	<script type='text/javascript' src='../../script/oldJs/lib/workflow.template.js' charset='utf-8'></script>
+	<script type='text/javascript' src='../../script/oldJs/lib/workflow.jquery.js' charset='utf-8'></script>
+	<!--<script src="../script/jquery.min.js" type="text/javascript" charset="utf-8"></script>-->
+	<!--<script type="text/javascript" src="http://121.201.91.165:6889/data/org/department.js"></script>
+<script type="text/javascript" src="http://121.201.91.165:6889/data/org/user.js"></script>-->
+	<script type="text/javascript">
+		$api.loadJs($api.getIp() + "/data/org/department.js");
+		$api.loadJs($api.getIp() + "/data/org/user.js");
+	</script>
+	<script>
+		var line_choose = "";
+		apiready = function() {
+			api.addEventListener({
+				name: 'navitembtn'
+			}, function(ret, err) {
+				if(ret.type == "left") {
+					api.closeWin();
+				}
+			});
+			var windows = api.windows();
+			var nowWindows = windows[2].name
+			var targetPhrasebook = "scontent";
+			api.addEventListener({
+				name: "selectphrasebook"
+			}, function(ret) {
+
+				if(ret.value.page === "workflow-next") {
+					if($("#" + targetPhrasebook).length) {
+						if($("#" + targetPhrasebook).get(0).tagName === "TEXTAREA") {
+							$("#" + targetPhrasebook).val(ret.value.phrasebook);
+						} else {
+							$("#" + targetPhrasebook).find("textarea").val(ret.value.phrasebook);
+						}
+					}
+				}
+
+			});
+			openSelectPhrasebook = function openSelectPhrasebook(target) {
+				targetPhrasebook = target;
+				//          console.log("1==="+target);
+				api.openTabLayout({
+					name: 'pstamp',
+					url: 'widget://html/center/phrasebook-list.html',
+					title: '我的常用语',
+					hideNavigationBar: false,
+					pageParam: {
+						type: "select",
+						page: "workflow-next"
+					},
+					navigationBar: {
+						background: '#E32416',
+						color: '#fff',
+						shadow: "#E32416",
+						leftButtons: [{
+							iconPath: 'widget://image/leftArrow.png'
+						}]
+					}
+				});
+			}
+			if(api.pageParam.key) {
+				var posturl = Quickos.api.url("workflow/handle/showNextView") + "&key=" + api.pageParam.key + "&topflag=" + api.pageParam.topflag + "&opflag=" + api.pageParam.opflag;
+				$(function() {
+					//              console.log(posturl);
+					Quickos.api.get(posturl, function(ret, err) {
+						if(ret.status === 0) {
+
+							var isover = ret.data.list[ret.data.list.length - 1].isover;
+							var overkey = ret.data.list.length - 1;
+							var data = ret.data;
+							$.extend(data, {
+								isover: isover,
+								overkey: overkey
+							});
+
+							$("#content").workflowNext(data, function(issccuess) {
+								if(issccuess) {
+									var isPingfa = $("[name='syncdeal']").val();
+									if(isPingfa == "0") {
+										line_choose = $("[name='prcs_check']:checked").val();
+									}
+									//保证 步骤中的子项可显示
+									$("input[name='prcs_check']:checked").each(function() {
+										var targetid = $(this).attr("data-targetshow");
+										$(".prc-item").hide();
+										$("#" + targetid).show();
+									});
+								}
+							});
+						} else {
+							api.toast({
+								msg: ret.info,
+								duration: 1000
+							});
+							setTimeout(function() {
+								api.closeWin();
+							}, 1000)
+						}
+					});
+				});
+			}
+			//切换类型
+			/*$(document).on("change","[name^='topflag']",function()
+			{
+			    var id=$(this).attr("name");
+			    var value=$(this).val();
+			    if(value=="1"||value=="2")
+			    {
+			        $("#"+id+",."+id).hide();
+			    }
+			    else if(value=="0")
+			    {
+			        $("#"+id+",."+id).show();
+			    }
+			});*/
+
+			//删除选择的用户监听
+			$(document).on("click", ".selected-item-content .select-item", function() {
+				var targetId = $(this).parent(".selected-item-content").attr("data-target");
+				var targetDom = $("#" + targetId);
+				var removeId = $(this).attr("data-id");
+				var selectedStr = targetDom.attr("data-selected");
+				var selectedObj = JSON.parse(selectedStr);
+				selectedObj = WorkFlow.removeItemById(removeId, selectedObj);
+				var nowSelectValue = WorkFlow.handleData(selectedObj) ? WorkFlow.handleData(selectedObj) : "";
+				targetDom.find("input").val(nowSelectValue);
+				selectedStr = JSON.stringify(selectedObj);
+				targetDom.attr("data-selected", selectedStr);
+				$(this).remove();
+			});
+
+			//全选 for 并发
+			showAll = function showAll() {
+				$("input[name='prcs_check']").prop("checked", true);
+				$(".prc-item").show();
+				var line_chooseArr = [];
+				line_choose = "";
+				$("input[name='prcs_check']").each(function() {
+					line_chooseArr.push($(this).val());
+				});
+				line_choose = line_chooseArr.join(",");
+			};
+			//全不选 for 并发
+			hideAll = function hideAll() {
+				$("input[name='prcs_check']").prop("checked", false);
+				$(".prc-item").hide();
+				line_choose = "";
+			};
+
+			//发布
+			publish = function() {
+				if(sncheckform()) {
+					var isPingfa = $("[name='syncdeal']").val(),
+						postdata = $("#form_data").serializeArray(),
+						handledata = handleFormData(postdata),
+						remindwayArr = [];
+
+					$("input[name='remindways']:checked").each(function() {
+						remindwayArr.push($(this).val());
+					});
+
+					handledata["remindway"] = remindwayArr.join(",");
+					handledata["content"] = $("#scontent").val() ? $("#scontent").val() : "";
+					//处理主办和通报人数据
+
+					//             $.extend(handledata,{prcs_user:handledata[handledata["prcs_user"+handledata.prcs_check]]});
+					$.extend(handledata, {
+						prcs_user_op: handledata[handledata["prcs_user_op" + handledata.prcs_check]]
+					});
+					//             console.log(JSON.stringify(handledata));
+					var url = Quickos.api.url("workflow/handle/ajaxTurnNext");
+					Quickos.api.post(url, handledata, function(ret, err) {
+						if(ret.status === 0) {
+							api.toast({
+								msg: "已成功转交下一步",
+								duration: 2000
+							});
+							api.sendEvent({
+								name: 'test',
+							});
+							setTimeout(function() {
+								api.closeToWin({
+									name: nowWindows
+								});
+							}, 2000)
+						} else {
+							api.toast({
+								msg: ret.info,
+								duration: 2000
+							});
+						}
+					});
+				}
+			};
+			/**
+			 * 下一步动作提交前检查
+			 */
+			function sncheckform() {
+				var msg = '';
+				var notAllFinished = $("[name='notAllFinished']").val();
+				var turnpriv = $("[name='turnpriv']").val();
+				var stop = $("[name='prcsStop']").val();
+				var count = $("[name='count']").val();
+				//结束流程
+				if(line_choose == stop) {
+					//检查有无尚未办理完毕的经办人
+					if((notAllFinished != '') && (turnpriv == '0')) {
+						$.alert('经办人' + notAllFinished + '尚未办理完毕，不能转交流程');
+						return false;
+					} else {
+						if((notAllFinished != '') && (turnpriv == '1')) {
+							msg += '经办人' + notAllFinished + '尚未办理完毕，不能转交流程';
+						}
+						msg += '确认要结束流程吗';
+						if(!window.confirm(msg)) {
+							return false;
+						}
+					}
+				} else { //转交
+					/* if(document.wfnext.message.value=="" && (document.wfnext.nextuser.checked || document.wfnext.beginuser.checked || document.wfnext.alluser.checked )) {
+					 $("body").iTips({content:'{lang message_cannot_be_empty}',css:'warning'});
+					 return false;
+					 }*/
+					//document.turn_next_form.prcs_choose.value = "";
+					$("input[name='prcs_choose']").val("");
+					var prcs_checkId = line_choose;
+					if(prcs_checkId) {
+						var prcs_checkIdArr = prcs_checkId.split(",");
+						for(var i in prcs_checkIdArr) {
+							//所选步骤的主办人
+
+							var prcs_user_op_tem = $("input[name='prcs_user_op" + prcs_checkIdArr[i] + "']").val() ? $("input[name='prcs_user_op" + prcs_checkIdArr[i] + "']").val() : "";
+							if($('input[name="topflag' + prcs_checkIdArr[i] + '"]').length > 0 && $('input[name="ishashost' + prcs_checkIdArr[i] + '"]').val() === "0" && prcs_user_op_tem === "") {
+								$.alert('请指定所选步骤的主办人');
+								return false;
+							} else if($('input[name="topflag' + prcs_checkIdArr[i] + '"]').length > 0 && $('input[name="ishashost' + prcs_checkIdArr[i] + '"]').val() === "2" && prcs_user_op_tem === "") {
+								$.alert('请指定所选步骤的主办人');
+								return false;
+							}
+							/* if($('[name="topflag' + prcs_checkId+'"]').length>0  && ($('[name="topflag' + prcs_checkId+'"]').val() != 0) && $("[name='prcs_user" + prcs_checkId+"']").val() == ""){
+							    $.alert("请指定所选步骤的经办人");
+							     return false;
+							 }*/
+							$("input[name='prcs_choose']").val(prcs_checkIdArr[i] + "," + $("[name='prcs_choose']").val());
+							//document.turn_next_form.prcs_choose.value += prcs_checkId + ",";
+						}
+					} //for
+					if($("input[name='prcs_choose']").val() == "") {
+						$.alert('请至少选择一个步骤进行转交');
+						return false;
+					}
+					if((notAllFinished != '') && (turnpriv == '1')) {
+						msg = '经办人' + notAllFinished + '尚未办理完毕，确认要转交下一步骤吗？';
+						if(!window.confirm(msg)) {
+							return false;
+						}
+					} else {
+						if((notAllFinished != '') && (turnpriv == '0')) {
+							$.alert('经办人' + notAllFinished + '尚未办理完毕，不能转交流程');
+							return false;
+						}
+					}
+				} //turn
+				return true;
+			}
+			//处理提交的form数据 转成json格式
+			function handleFormData(data) {
+				var postData = {};
+				for(var x in data) {
+					postData[data[x].name] = data[x].value;
+				}
+				postData["prcs_user"] = "";
+				postData["prcs_user_op"] = "";
+				postData["remind"] = "";
+				var targetnum = postData["prcs_check"];
+				postData["prcs_user"] = postData["prcs_user" + targetnum];
+				postData["prcs_user_op"] = postData["prcs_user_op" + targetnum];
+				for(var y = 1; y <= 3; y++) {
+					if(postData["reminds[" + y + "]"]) {
+						postData["remind"] += "," + postData["reminds[" + y + "]"];
+					}
+				}
+				postData["remind"] = postData["remind"].substr(1, postData["remind"].length - 1);
+				return postData;
+			}
+			closeWin = function() {
+
+				api.sendEvent({
+					name: 'initIndexCount',
+					extra: {}
+				});
+				if(api.pageParam.closeToWin) {
+					//              console.log(api.pageParam.closeToWin);
+					var initName = api.pageParam.closeToWin;
+					api.sendEvent({
+						name: initName,
+						extra: {}
+					});
+					if(initName === 'workflowWaitList') {
+						setTimeout(function() {
+							api.closeToWin({
+								name: "workflowNav"
+							});
+						}, 1000);
+					} else if(api.pageParam.closeToWin === "frame4") {
+						setTimeout(function() {
+							api.closeToWin({
+								name: "root"
+							});
+						}, 1000);
+					} else {
+						setTimeout(function() {
+							api.closeToWin({
+								name: api.pageParam.closeToWin
+							});
+						}, 1000);
+					}
+				}
+				setTimeout(function() {
+					api.closeWin();
+				}, 1000);
+			};
+		};
+		//处理用户
+		function handleUserItem(data) {
+			var user = Ibos.data.user;
+			var userObj = {};
+			var names = [];
+			var ids = [];
+			var dataArr = data;
+			for(var x in dataArr) {
+				names.push(user[dataArr[x]].text);
+				ids.push(dataArr[x]);
+			}
+			$.extend(userObj, {
+				nameArr: names,
+				ids: ids
+			});
+			return userObj
+		}
+		//初始化主办人
+		function initHost(userId) {
+			if(userId) {
+				var user = Ibos.data.user;
+				var realname = user[userId].text;
+
+			}
+		}
+		//切换下一步骤执行
+		var text = '';
+		var text2 = '';
+		$(document).on('click', '[data-click="view_user_table"]', function() {
+			text = $(this).text().trim();
+		});
+
+		$(document).on("change", "input[name='prcs_check']", function() {
+			var isPingfa = $(this).attr("data-pingfa");
+			var targetid = $(this).attr("data-targetshow");
+			var inputid = $(this).attr("id");
+			var value = $(this).val();
+			if($(this).is(":checked")) {
+				if(isPingfa === "0") {
+					line_choose = $(this).val();
+					$(".prc-item").hide();
+				}
+				if(isPingfa === "1") {
+					if(text == "办公室初审") {
+						$("input[name='prcs_check']").prop("checked", false);
+						$("#" + inputid).prop("checked", true);
+						$(".prc-item").hide();
+						line_choose = $(this).val();
+						text2 = "1"
+					} else if(text.substr(0, 4) == "处室核稿") {
+						$("input[name='prcs_check']").prop("checked", false);
+						$("#" + inputid).prop("checked", true);
+						$(".prc-item").hide();
+						line_choose = $(this).val();
+						text2 = "1";
+					} else if(text.substr(0, 4) == "处室会签") {
+						if(text2 != '') {
+							$("input[name='prcs_check']").prop("checked", false);
+							$("#" + inputid).prop("checked", true);
+							$(".prc-item").hide();
+							text2 = '';
+							line_choose = '';
+						}
+						var value2 = $(this).val();
+						line_choose = value2 + "," + line_choose;
+					} else if(text == "办公室" || text == "人事处") {
+						if(text2 != '') {
+							$("input[name='prcs_check']").prop("checked", false);
+							$("#" + inputid).prop("checked", true);
+							$(".prc-item").hide();
+							text2 = '';
+							line_choose = '';
+						}
+						var value2 = $(this).val();
+						line_choose = value2 + "," + line_choose;
+					} else if(text == "分管厅领导意见") {
+						$("input[name='prcs_check']").prop("checked", false);
+						$("#" + inputid).prop("checked", true);
+						$(".prc-item").hide();
+						line_choose = $(this).val();
+						text2 = "1";
+					} else if(text == "厅领导" || text == "相关处室") {
+						if(text2 != '') {
+							$("input[name='prcs_check']").prop("checked", false);
+							$("#" + inputid).prop("checked", true);
+							$(".prc-item").hide();
+							text2 = '';
+							line_choose = '';
+						}
+						var value2 = $(this).val();
+						line_choose = value2 + "," + line_choose;
+					} else if(text == "网站管理员") {
+						$("input[name='prcs_check']").prop("checked", false);
+						$("#" + inputid).prop("checked", true);
+						$(".prc-item").hide();
+						line_choose = $(this).val();
+						text2 = "1";
+					} else {
+						$api.removeItemFromStr(line_choose, value);
+						line_choose = line_choose + "," + value;
+					}
+				}
+				$("#" + targetid).show();
+			} else {
+				if(isPingfa !== "0") {
+					$("#" + targetid).hide();
+					line_choose = $api.removeItemFromStr(line_choose, value);
+				}
+			}
+		});
+		//
+	</script>
+
+</html>

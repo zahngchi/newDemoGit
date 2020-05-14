@@ -1,0 +1,417 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>我的待办</title>
+		<link rel="stylesheet" href="../../css/api.css">
+		<link rel="stylesheet" href="../../css/swiper.min.css">
+		<link rel="stylesheet" href="../../css/PUBLIC.css">
+		<style media="screen">
+			body,
+			html {
+				width: 100%;
+				height: 100%;
+				background-color: #F0F0F4;
+			}
+
+			.search {
+				display: flex;
+				flex-flow: row;
+				height: 60px;
+				box-sizing: border-box;
+				padding: 10px 15px 10px 15px;
+			}
+
+			.search input {
+				background-color: #FFFFFF;
+				border-radius: 6px;
+				height: 35px;
+				width: 100%;
+				padding: 2px 5px;
+				text-indent: 10px
+			}
+
+			.search a {
+				height: 35px;
+				line-height: 35px;
+				text-align: center;
+				padding-left: 15px;
+				display: none;
+			}
+
+			.tab {
+				width: 100%;
+				height: 45px;
+				background: #ffffff;
+				box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+				display: flex;
+				justify-content: space-around;
+				align-items: center;
+				position: relative;
+				z-index: 100
+			}
+
+			.tab_item {
+				width: 50%;
+				height: 100%;
+				line-height: 47px;
+				text-align: center;
+				color: #777;
+				font-size: 15px;
+				position: relative;
+			}
+
+			.active_item {
+				color: #E32416
+			}
+
+			.active_item:after {
+				content: "";
+				position: absolute;
+				bottom: 0px;
+				width: 50%;
+				border-bottom: 1px solid #E32416;
+				left: 0;
+				right: 0;
+				margin: auto
+			}
+
+			.tab_page {
+				width: 100%;
+				height: calc(100% - 105px);
+			}
+
+			.todo_send_list,
+			.todo_receive_list {
+				width: 100%;
+				height: 100%;
+				overflow-x: scroll;
+				background: #F0F0F4;
+				box-sizing: border-box;
+			}
+
+			.list_item {
+				width: 100%;
+				height: 100px;
+				background: #fff;
+				position: relative;
+				border-bottom: 1px solid #F0F0F4
+			}
+
+			.item_title {
+				position: absolute;
+				left: 15px;
+				top: 15px;
+				font-size: 16px;
+				width:calc(100% - 30px);
+				height:45px;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 2;
+				overflow: hidden;
+				font-weight: bold;
+				color: #333333
+			}
+
+			.item_processid {
+				width: 20px;
+				height: 20px;
+				background: #666666;
+				border-radius: 3px;
+				position: absolute;
+				left: 15px;
+				bottom: 15px;
+				text-align: center;
+				line-height: 20px;
+				color: #fff;
+				font-size: 12px
+			}
+
+			.item_stepname {
+				position: absolute;
+				left: 45px;
+				bottom: 16px;
+				font-size: 14px;
+				color: #666666
+			}
+
+			.item_datetime {
+				font-size: 12px;
+				color: #666666;
+				position: absolute;
+				right: 15px;
+				bottom: 15px
+			}
+
+			.item_arrow {
+				position: absolute;
+				right: 15px;
+				top: 15px;
+				font-size: 17px;
+				color: #323233
+			}
+
+			.empty {
+				width: 100%
+			}
+
+			.empty img {
+				display: block;
+				margin: 20px auto;
+				width: 100px;
+				margin-top: 30px
+			}
+
+			.empty div {
+				color: #8A8A8A;
+				text-align: center;
+			}
+
+			.loading {
+				width: 100%;
+				height: 40px;
+				text-align: center;
+				position: relative;
+				font-size: 15px;
+				box-sizing: border-box;
+				line-height: 40px;
+				color: #666666
+			}
+
+			.loading .loadingicon {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				margin: auto auto;
+				left: 38%;
+				height: 15px;
+				width: 15px;
+				line-height:
+			}
+
+			.loading .iconfont {
+				animation: xuanzhuan 1s linear infinite;
+				-moz-animation: xuanzhuan 1s linear infinite;
+				/* Firefox */
+				-webkit-animation: xuanzhuan 1s linear infinite;
+				/* Safari 和 Chrome */
+				-o-animation: xuanzhuan 1s linear infinite;
+				position: absolute;
+				font-size: 15px;
+				left: 0;
+				line-height: normal;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="tab">
+			<div class="tab_item active_item" data-page="0">待办收文</div>
+			<div class="tab_item" data-page="1">已办收文</div>
+		</div>
+		<div class="search">
+			<input type="text" name="" value="" placeholder="请输入关键字" id="search" />
+			<a id="search_button">搜索</a>
+		</div>
+		<div class="swiper-container tab_page">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide">
+					<div class="todo_send_list list" data-paginate="1">
+						<div class="loading">
+							<div class="loadingicon"><i class="iconfont iconjiazaizhong"></i></div>&nbsp;<span>加载中</span></div>
+					</div>
+				</div>
+				<div class="swiper-slide">
+					<div class="todo_receive_list list" data-paginate="1">
+						<div class="loading">
+							<div class="loadingicon"><i class="iconfont iconjiazaizhong"></i></div>&nbsp;<span>加载中</span></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery.min.js"></script>
+	<script type="text/javascript" src="../../script/swiper.min.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			listenCloseAjax();
+			//监听转交完成后刷新列表
+			api.addEventListener({
+				name: "test"
+			}, function(ret) {
+				location.href = location.href
+			});
+
+			$(".tab_item").click(function() {
+				$(".tab_item").removeClass("active_item");
+				$(this).addClass("active_item");
+				mySwiper1.slideTo($(this).attr("data-page"), 300, false);
+
+			})
+			$("#search_button").click(function() {
+				$("#search_button").css("display", "none")
+				$("#search").css("width", "100%")
+				$(".search").css("padding-right", "15px")
+				search_text = $("#search").val()
+
+				var id = $(".tab .active_item").attr("data-page");
+				$(".tab_page .swiper-slide:eq(" + id + ") > .list .list_item").remove();
+				getList(id, 1, search_text);
+			})
+			//			点击输入框
+			$("#search").click(function() {
+				$("#search_button").css("display", "block")
+				$("#search").css("width", "80%")
+				$(".search").css("padding-right", "0px")
+			})
+			var mySwiper1 = new Swiper('.tab_page', {
+				on: {
+					slideChangeTransitionStart: function() {
+						$(".tab .tab_item").removeClass("active_item");
+						$(".tab .tab_item:eq(" + this.activeIndex + ")").addClass("active_item");
+
+					},
+				},
+			})
+			getList(0, 1);
+			getList(1, 1)
+
+			$(".todo_send_list").scroll(function() {
+				var scrollTop = $(this).scrollTop();
+				var scrollHeight = $(this)[0].scrollHeight;
+				var height = $(this).height();
+
+				if((scrollTop + height + 5) >= scrollHeight) {
+					var paginate = $(this).attr("data-paginate");
+					getList(0, parseInt(paginate) + 1)
+					$(this).attr("data-paginate", parseInt(paginate) + 1);
+				}
+			});
+			$(".todo_receive_list").scroll(function() {
+				var scrollTop = $(this).scrollTop();
+				var scrollHeight = $(this)[0].scrollHeight;
+				var height = $(this).height();
+
+				if((scrollTop + height + 5) >= scrollHeight) {
+					var paginate = $(this).attr("data-paginate");
+					getList(1, parseInt(paginate) + 1)
+					$(this).attr("data-paginate", parseInt(paginate) + 1);
+//					getList(parseInt(paginate)+1,false)
+				}
+			});
+
+			var empty_tpl = '<div class="empty"><img src="../../image/noContent_yet.png" alt=""><div>暂无收文数据 </div></div>';
+			empty_tpl = $(empty_tpl);
+			var list_item_tpl = '<div class="list_item"><div class="item_title"></div><div class="item_processid"></div><div class="item_stepname"></div><div class="item_datetime"></div><div class="item_arrow iconfont iconxiangyoujiantou"></div></div>';
+			list_item_tpl = $(list_item_tpl);
+
+			function getList(id, page, search) {
+				var search = search ? search : "";
+				var type = "";
+				var list = $(".tab_page .swiper-slide:eq(" + id + ") > .list");
+				list.find(".loading span").text("加载中");
+				list.find(".loading").show();
+				list.find(".empty").hide();
+				if(id == "0") {
+					type = "todo";
+				} else if(id == "1") {
+					type = "trans";
+				}
+
+				var start = 0;
+				var length = 10;
+
+				start = (page * length) - length;
+
+				var param = "&module=shouwenshenpi&start=" + start + "&length=" + length + "&type=" + type + "&sort=all&flowid=122,123,168,126,187" + "&keyword=" + search;
+				$.get(host + "workflow/list/m_index" + param, {}, function(data) {
+
+					var list_child = $(".tab_page .swiper-slide:eq(" + id + ") > .list .list_item").length;
+
+					if(data.data.list.length < 1 && list_child >= 10){
+						list.find(".loading span").text("没有更多数据了");
+						return false;
+					}
+					if(data.data.list.length < 1 && list_child < 1) {
+						list.find(".empty").remove();
+						list.append(empty_tpl.clone());
+						list.find(".loading").hide();
+					} else {
+
+						data.data.list.forEach(function(value, index, array) {
+							var dom = list_item_tpl.clone();
+							dom.attr("data-key", value.key).attr("data-processid", value.processid).attr("data-flowid", value.flowid).attr("data-type", value.type)
+							dom.find(".item_title").text(value.runName)
+							dom.find(".item_processid").text(value.flowprocess)
+							dom.find(".item_stepname").text(value.stepname)
+							dom.find(".item_datetime").text(value.begintime)
+							list.find(".loading").before(dom);
+
+						})
+					}
+					if(data.data.list.length < 1 || (start == 0 && data.data.list.length < 10)) {
+						list.find(".loading span").text("没有更多数据了");
+					}
+				})
+
+			}
+
+			$(".todo_send_list").on("click", ".list_item", function() {
+				var key = $(this).attr("data-key");
+				var processid = $(this).attr("data-processid");
+				var flowid = $(this).attr("data-flowid");
+				api.openTabLayout({
+					name: 'workflow',
+					url: 'widget://html/workbench/workflow.html',
+					title: '工作办理',
+					hideNavigationBar: false,
+					pageParam: {
+						key: key,
+						flowid: flowid,
+						processid: processid
+					},
+					navigationBar: {
+						background: '#E32416',
+						color: '#fff',
+						leftButtons: [{
+							iconPath: 'widget://image/leftArrow.png'
+						}]
+					}
+				});
+				//})
+			})
+			$(".todo_receive_list").on("click", ".list_item", function() {
+				var key = $(this).attr("data-key");
+				var type = $(this).attr("data-type");
+
+				api.openTabLayout({
+					name: 'workflow',
+					url: 'widget://html/workbench/workflow-detail.html',
+					title: '工作办理详情页',
+					hideNavigationBar: false,
+					pageParam: {
+						key: key,
+						type: type
+					},
+					navigationBar: {
+						background: '#E32416',
+						color: '#fff',
+						leftButtons: [{
+							iconPath: 'widget://image/leftArrow.png'
+						}]
+					}
+				});
+				//})
+			})
+
+			//getList(0,0)
+		};
+	</script>
+
+</html>

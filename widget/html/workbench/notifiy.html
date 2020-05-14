@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>消息提醒</title>
+		<link rel="stylesheet" href="../../css/api.css">
+		<link rel="stylesheet" href="../../css/PUBLIC.css">
+		<style media="screen">
+			body,
+			html {
+				width: 100%;
+				height: 100%;
+				background-color: #F0F0F4;
+			}
+
+			.status {
+				height: 10px;
+				width: 10px;
+				border-radius: 70px;
+				background: #E32416;
+				margin-right: 10px;
+				box-sizing: border-box;
+			}
+
+			.notifiy-list{
+
+			}
+			.notifiy{
+				display: flex;
+				flex-flow:row;
+				align-items: center;
+				justify-content: space-between;
+				background-color: #FFFFFF;
+				border-bottom: solid 1px #F0F0F4;
+				padding: 25px 20px;
+			}
+			.notifiy-title{
+				margin-bottom: 10px;
+				color: #333333;
+				font-size: 14px;
+				font-weight: 400;
+				width:280px;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 2;
+				overflow: hidden;
+			}
+			.notifiy-detail{
+				display: flex;
+				flex-flow: row;
+				align-items: center;
+			}
+			.date{
+				font-size: 12px;
+				color: #666666;
+				font-weight: 400;
+			}
+			.notifiy .iconfont{font-size:15px}
+			.empty img {
+				display: block;
+				margin: 20px auto;
+				width: 100px;
+				margin-top: 30px
+			}
+
+			.empty div {
+				color: #8A8A8A;
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body id="notifiy-list">
+		<!--<div class="notifiy" data-id="">
+			<div class="notifiy-detail">
+				<div class="status"></div>
+				<div class="">
+					<div class="notifiy-title">OA平台提醒您：某某公文标题，文件需要您处理</div>
+					<div class="date">3天前</div>
+				</div>
+			</div>
+			<div class="">
+				<img src="../../image/next.png" width="20"/>
+			</div>
+		</div>-->
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery.min.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+
+			listenCloseAjax();
+			var uid = JSON.parse(localStorage.getItem("userinfo")).uid
+			var post_data={
+				uid:uid,
+				type:"all"
+			}
+
+			//获取消息提醒列表
+			var empty_tpl='<div class="empty"><img src="../../image/noContent_yet.png" alt=""><div>暂无消息提醒</div></div>';
+			empty_tpl=$(empty_tpl);
+			var notifiyUrl=host+'mobile/notify/getnotifylist'
+			var notifiy_list='<div class="notifiy" data-id="">'+
+									'<div class="notifiy-detail">'+
+										'<div class="status"></div>'+
+										'<div class="">'+
+											'<div class="notifiy-title"></div>'+
+											'<div class="date">3天前</div>'+
+										'</div>'+
+									'</div>'+
+									'<div class="">'+
+										'<i class="iconfont iconxiangyoujiantou"></i>'+
+									'</div>'+
+								'</div>';
+			notifiy_list=$(notifiy_list)
+			console.log(Date())
+			$.get(notifiyUrl,post_data,function(res){
+				console.log(Date())
+//				console.log(JSON.stringify(res))
+				if(res.data.length){
+					$("#notifiy-list").append(empty_tpl);
+					return false;
+				}
+				res.data.datas.forEach(function(value, index, array) {
+					var notifiy=notifiy_list.clone()
+					notifiy.find(".notifiy-title").text(value.title)
+					notifiy.find(".date").html(value.ctime)
+					notifiy.attr("data-id",value.id)
+					if(value.isread==1){
+						notifiy.find(".status").css("visibility","hidden")
+					}
+					$("#notifiy-list").append(notifiy)
+				})
+			})
+
+			$("#notifiy-list").on("click", ".notifiy", function() {
+				$(this).find(".status").css("visibility", "hidden");
+				var id=$(this).attr("data-id")
+				api.openTabLayout({
+					name: 'notifiy_detail',
+					url: 'widget://html/workbench/notifiy_detail.html',
+					title: '消息提醒详情',
+					hideNavigationBar: false,
+					navigationBar: {
+						background: '#E32416',
+						color: '#fff',
+						leftButtons: [{
+							iconPath: 'widget://image/leftArrow.png'
+						}]
+					},
+					pageParam: {
+				        notifiyId:id
+				    }
+				});
+			})
+
+
+
+		};
+	</script>
+
+</html>

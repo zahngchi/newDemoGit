@@ -1,0 +1,128 @@
+.clearfix::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+body {
+    background-color: #fff;
+}
+.wrapper {
+    width: 100%;
+    padding-top: 3.45rem;
+    padding-left:0.75rem;
+    padding-right:0.75rem;
+    padding-bottom:3rem;
+}
+.e-mail-title {
+    width: 100%;
+    padding: 0.3rem;
+    background-color: #fff;
+    border:1px solid #efeded;
+}
+.e-mail-title h3 {
+    font-size: 1rem;
+    color: #333;
+}
+.e-mail-title .release {
+    padding-top: 0.03rem;
+    font-size: 0.7rem;
+    color: #999;
+}
+.e-mail-title .release .name{
+    padding-right: 0.4rem;
+}
+.release-content {
+    float: left;
+}
+.detailed
+{
+    float: right;
+}
+.e-mail-content
+{
+    width: 100%;
+    padding: 0.3rem;
+    min-height:10rem;
+    overflow: scroll;
+    border-left:1px solid #efeded;
+    border-right:1px solid #efeded;
+    border-bottom:1px solid #efeded;
+}
+
+.e-mail-content img {
+    max-width: 100%;
+    height:auto !important;
+}
+.e-mail-content>*
+{
+    max-width:100% !important;
+    width:100% !important;
+}
+.e-mail-content *
+{
+    position:relative !important;
+    float:none !important;
+}
+.toolbar {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #f7f7f8;
+    height:3rem;
+}
+.toolbar .item {
+    float: left;
+    width: 33%;
+    padding-top: 0.5rem ;
+    text-align: center;
+    height:100%;
+}
+.toolbar .item  span {
+    display:inline-block;
+    width:21px;
+    height:21px;
+    background-size:100%;
+    background-repeat:no-repeat;
+}
+.mark
+{
+    background-image:url("../image/e-mail/mark.png");
+}
+
+.mark-active
+{
+    background-image:url("../image/e-mail/mark-active.png");
+}
+
+.answer
+{
+    background-image:url("../image/e-mail/answer.png");
+}
+
+.zhuanfa
+{
+    background-image:url("../image/e-mail/zhuanfa.png");
+}
+.delete
+{
+    background-image:url("../image/e-mail/delete.png");
+}
+
+.bg-email-tip
+{
+    background: url(../image/e-mail/bg_mal_view.png) repeat-x;
+    padding-top:0.45rem;
+    background-size:3.5rem;
+}
+/*附件*/
+.e-mail-attach
+{
+    width:100%;
+    padding:0.3rem;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    box-shadow:1px 3px 3px #e0e0e0;
+}
+

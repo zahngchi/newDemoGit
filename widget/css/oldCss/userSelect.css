@@ -1,0 +1,156 @@
+.select-content-bg
+{
+    width: 100%;
+    height: 100%;
+    position:fixed;
+    top:0;
+    left:0;
+    background-color: rgba(0, 0, 0, 0.71);
+    z-index: 99999999999;
+}
+.select-content
+{
+    position:fixed;
+    bottom:-13.5rem;
+    left:0px;
+    width:100%;
+    height:12rem;
+    box-shadow: 1px -1px 3px #b3bdc3;
+    background-color:white;
+    z-index: 999999999999;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all  0.5s;
+    -ms-transition: all  0.5s;
+    -o-transition: all  0.5s;
+    transition: all  0.5s;
+}
+.select-header
+{
+    height:30px;
+}
+.select-content-wrap
+{
+    height:210px;
+}
+/*.select-content .select-header,.select-content-wrap
+{
+    width:100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+
+}
+.select-header .select-item-title
+{
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+}
+.select-content-wrap .item-content
+{
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+}*/
+.select-content-active
+{
+    bottom:0;
+}
+.select-content-close
+{
+    bottom:-13.5rem;
+}
+.select-content .item-content
+{
+    height:100%;
+    background-color:white;
+    box-shadow:1px 1px 3px #B8C2C8;
+    float: left;
+    overflow-y:auto;
+}
+.select-content .department-content
+{
+    width:40%;
+}
+.select-content ul
+{
+    width:100%;
+    height:100%;
+}
+.select-content .department-content ul li
+{
+    width:100%;
+    min-height:1.5rem;
+    border-bottom:1px solid #EEEEEE;
+    text-align: center;
+    padding:0.7rem;
+}
+.select-content .user-content
+{
+    width:30%;
+    margin-left:2px;
+}
+.select-content .user-content ul li
+{
+    width:100%;
+    min-height:1.5rem;
+    border-bottom:0.5px solid darkgrey;
+    text-align: center;
+    padding:0.7rem;
+    margin-top:1px;
+}
+.select-content .selected-content
+{
+    width:28%;
+
+    margin-left:2px;
+    box-shadow: none;
+}
+.select-content .selected-content ul li
+{
+    width:95%;
+    min-height:1rem;
+    border-radius:4px;
+    background-color:#E32416;
+    margin:0.2rem auto;
+    text-align: center;
+    color:white;
+    padding:0.5rem;
+}
+.select-content .select-item-title
+{
+    display:inline-block;
+    height: 1.5rem;
+    text-align: center;
+    line-height: 1.5rem;
+    background-color:#F4F6F6;
+}
+
+.department-title
+{
+    width:40%;
+}
+.user-title
+{
+    width:30%;
+}
+.select-title
+{
+    width:30%;
+    background-color:#E32416 !important;
+    text-align: center;
+}
+.department-active
+{
+    border-left:3px solid #E32416;
+    background-color:antiquewhite;
+}
+.user-active
+{
+    text-decoration: underline;
+    background-color:antiquewhite;
+}
+.select-user-btn
+{
+    color:white;
+}

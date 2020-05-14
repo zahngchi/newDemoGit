@@ -1,0 +1,222 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>我的常用语</title>
+		<link rel="stylesheet" href="../../css/api.css">
+		<link rel="stylesheet" href="../../css/public.css">
+		<style media="screen">
+			body,
+			html {
+				width: 100%;
+				height: 100%;
+				background-color: #F0F0F4;
+				position: relative;
+			}
+			
+			#phrasebook {}
+			
+			.phrasebook_detail {
+				display: flex;
+				flex-flow: row;
+				align-items: center;
+				border-bottom: solid 1px #F0F0F4;
+				background-color: #FFFFFF;
+				padding: 18px 0px 18px 20px;
+			}
+			
+			.phrasebook_detail span {
+				font-size: 18px;
+				color: #333333;
+				padding-left: 20px;
+			}
+			
+			.add {
+				text-align: center;
+				background: #f44336;
+				width: 50px;
+				height: 50px;
+				color: #FFFFFF;
+				font-size: 26px;
+				line-height: 50px;
+				border-radius: 50%;
+				position: fixed;
+				right: 20px;
+				bottom: 20px;
+			}
+			
+			.empty img {
+				display: block;
+				margin: 20px auto;
+				width: 100px;
+				margin-top: 30px
+			}
+			
+			.empty div {
+				color: #8A8A8A;
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="phrasebook">
+
+		</div>
+		<div class="add" onclick="addPhrase()">
+			+
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery.min.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			listenCloseAjax();
+
+			var param = api.pageParam;
+			var empty_tpl = '<div class="empty"><img src="../../image/noContent_yet.png" alt=""><div>暂无常用语</div></div>';
+			empty_tpl = $(empty_tpl);
+			var phrase_list = '<div class="phrasebook_detail">' +
+				'<div class="radio"></div>' +
+				'<span id="" data-id=""> </span>' + '</div>'
+			phrase_list = $(phrase_list)
+			$.get(host + "mobile/phrasebook/getphrase", {
+				length: 100,
+				p: 0
+			}, function(res) {
+				//				console.log(JSON.stringify(res))
+				if(res.data.length == 0) {
+					$("#phrasebook").append(empty_tpl);
+					//					console.log(111)
+					return false;
+				}
+				res.data.forEach(function(value, index, array) {
+					//					console.log(JSON.stringify(value))
+					var phrase = phrase_list.clone();
+					phrase.attr("data-text", value.phrasedesc)
+					phrase.find("span").text(value.phrasedesc);
+					phrase.find(".radio").attr("data-id", value.phrasedesc);
+					if(param.type !== "select") {
+						phrase.find(".radio").css("display", "none")
+					}
+					$('#phrasebook').append(phrase);
+				})
+			})
+
+			$("#phrasebook").on("click", ".phrasebook_detail", function() {
+				$("#phrasebook .radio").removeClass("radio_selected")
+				$(this).find(".radio").addClass("radio_selected")
+				var text = $(this).attr("data-text");
+				if(param.type == "select") {
+					api.sendEvent({
+						name: 'selectphrasebook',
+						extra: {
+							phrasebook: $(this).attr("data-text"),
+							page: param.page
+						}
+					});
+					setTimeout(function() {
+						api.closeWin();
+					}, 100)
+
+				}
+			})
+		};
+
+		function addPhrase() {
+			var dialogBox = api.require('dialogBox');
+			dialogBox.input({
+				keyboardType: 'default',
+				texts: {
+					title: '添加常用语',
+					placeholder: '请输入常用语内容',
+					leftBtnTitle: '取消',
+					rightBtnTitle: '确定'
+				},
+				styles: {
+					bg: '#fff',
+					corner: 2,
+					w: 300,
+					h: 200,
+					title: {
+						h: 30,
+						alignment: 'center',
+						size: 20,
+						color: '#000',
+						marginT: 20,
+					},
+					input: {
+						h: 60,
+						marginT: 20,
+						marginLeft: 20,
+						marginRight: 20,
+						textSize: 16,
+						textColor: '#000',
+						borderColor: '#e3e3e8',
+						borderWidth: 1,
+						verticalCenter: true
+					},
+					dividingLine: {
+						width: 0,
+						color: '#000'
+					},
+					left: {
+						bg: 'rgba(0,0,0,0)',
+						color: '#f44336',
+						size: 18
+					},
+					right: {
+						bg: 'rgba(0,0,0,0)',
+						color: '#f44336',
+						size: 18
+					},
+					horizontalLine: {
+						color: '#f0f0f5', //（可选项）字符串类型；左右按钮上边横线的颜色，支持rgb、rgba、#；默认：'rgba(245,245,245,0)'
+						height: 1 //（可选项）数字类型；左右边按钮横线的高度；默认：0
+					},
+					verticalLine: {
+						color: '#f0f0f5', //（可选项）字符串类型；左右按钮中间竖线的颜色，支持rgb、rgba、#；默认：'rgba(245,245,245,0)'
+						width: 1 //（可选项）数字类型；左右边按钮竖线的高度；默认：0
+
+					},
+				}
+			}, function(ret) {
+				if(ret.eventType == 'left') {
+					var dialogBox = api.require('dialogBox');
+					dialogBox.close({
+						dialogName: 'input'
+					});
+				}
+				if(ret.eventType == 'right') {
+					if(ret.text == '') {
+						api.toast({
+							msg: "请输入签章内容",
+							duration: 2000
+						});
+					} else {
+						$.get(host + "phrasebook/list/phraseset", {
+							phrasedesc: ret.text
+						}, function(ret, err) {
+							api.toast({
+								msg: ret.msg,
+								duration: 2000
+							});
+							location.href = location.href
+							if(ret.isSuccess === true) {
+								var dialogBox = api.require('dialogBox');
+								dialogBox.close({
+									dialogName: 'input'
+								});
+							}
+						})
+					}
+				}
+			});
+		}
+	</script>
+
+</html>

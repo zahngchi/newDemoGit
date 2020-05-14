@@ -1,0 +1,275 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>修改头像</title>
+		<link rel="stylesheet" href="../../css/api.css">
+		<link rel="stylesheet" href="../../css/public.css">
+		<style media="screen">
+			body,
+			html {
+				width: 100%;
+				height: 100%;
+
+				background-color: #F0F0F4;
+			}
+
+			.logo-top {
+				width: 100%;
+				height: 200px;
+				background-color: #E32416;
+				overflow: hidden;
+			}
+
+			.logo-top .logo-img-content {
+				width: 80px;
+				height: 80px;
+				background-color: white;
+				margin: 60px auto;
+				border-radius: 5px;
+				overflow: hidden;
+				position: relative;
+				overflow: hidden;
+			}
+
+			.logo-top .logo-img-content .logo-img {
+				text-align: center;
+				width: 80px;
+				height: 80px;
+				-webkit-background-size: cover;
+				background-size: cover;
+				position: relative;
+				overflow: hidden;
+			}
+
+			.logo-top .logo-img-content .progressBar {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 190, 238, .7);
+				top: 120px;
+				line-height: 20px;
+				color: white;
+				border-radius: 5px;
+				-webkit-transition: all 1s;
+				-moz-transition: all 1s;
+				-ms-transition: all 1s;
+				-o-transition: all1s;
+				transition: all 1s;
+			}
+
+			.logon-btn {
+				width: 70%;
+				display: flex;
+				flex-flow: row;
+				justify-content: space-between;
+				margin: 0 auto;
+				margin-top: 50px;
+			}
+
+			.logon-btn button {
+				color: #FFFFFF;
+				border-radius: 4px;
+				padding: 20px;
+			}
+
+			.logon-btn button:nth-child(1) {
+				background-color: #0496FF;
+			}
+
+			.logon-btn button:nth-child(2) {
+				background-color: #FF9E1F;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="logo-top">
+			<div class="logo-img-content">
+				<div id="avatar" class="logo-img" style="">
+					<div class="progressBar">0%</div>
+				</div>
+			</div>
+		</div>
+		<div class="logon-btn">
+			<button class="create-actions">更换头像</button>
+			<button class="changeUserLogo">确认更改</button>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery.min.js"></script>
+	<script type="text/javascript" src="../../script/public.js"></script>
+	<script type="text/javascript">
+		var avatar_file = null; //头像文件
+		apiready = function() {
+
+			listenCloseAjax();
+			
+			var uid = JSON.parse(localStorage.getItem("userinfo")).uid
+			$.get(host + "mobile/user/getavatar", {
+				uid: uid
+			}, function(ret) {
+//				console.log(JSON.stringify(ret))
+				if(ret) {
+					$("#avatar").css({
+						'background-image': 'url(' + host_ + ret.data + '?t='+Math.random()+')'
+					});
+				}
+			})
+
+			function getPic(type) {
+				api.getPicture({
+					sourceType: type
+				}, function(ret, err) {
+					console.log(JSON.stringify(ret))
+					if(ret) {
+						$(".logo-top .logo-img-content .progressBar").css({
+							"top": "60px",
+							"border-radius": "5px",
+							"line-height": "20px"
+						}).text("0%");
+						//var fileroot = ret.data;
+						$("#avatar").css("background-image", "url(" + ret.data + ")");
+						avatar_file = ret.data;
+						/*
+						 */
+					} else {
+						//alert(JSON.stringify(err));
+					}
+				});
+			}
+			//上传头像
+			$(".logon-btn").on('click', '.create-actions', function() {
+				api.actionSheet({
+					title: '请选择',
+					cancelTitle: '取消',
+					cacancelColor: "#E32416",
+					buttons: ['拍照', '从手机相册选择', ],
+				}, function(ret, err) {
+					var index = ret.buttonIndex;
+					if(index == 1) {
+						getPic("camera");
+					} else if(index == 2) {
+						getPic('album');
+					}
+				});
+			})
+			//确认修改
+			$(".logon-btn").on('click', '.changeUserLogo', function() {
+				$(".logo-top .logo-img-content .progressBar").css({
+					"top": "60px",
+					"border-radius": "5px"
+				}).text("0%");
+				var fileroot = $("#avatar").css("background-image");
+				if(fileroot !== "none") {
+					fileroot = fileroot.replace("url(", "");
+					fileroot = fileroot.substr(0, fileroot.length - 1);
+					//      console.log(fileroot)
+					if(fileroot) {
+						var uid= JSON.parse(localStorage.getItem("userinfo")).uid
+//						var url=host+user/info/uploadavatar
+						var posturl=host+"user/info/uploadavatar"
+//						var posturl = Quickos.api.url('user/info/uploadavatar');
+						// var posturl = Quickos.api.url('/look.php');
+						api.ajax({
+							data: {
+								files: {
+									Filedata: avatar_file
+								},
+								values: {
+									module: 'user',
+									uid: uid
+								}
+							},
+							report: true,
+							dataType: 'json',
+							method: 'post',
+							url: posturl,
+						}, function(ret, err) {
+//							console.log(JSON.stringify(ret))
+							if(ret) {
+								if(ret.status == 1) {
+									var datas = {
+										values: {
+											src: ret.body.data,
+											uid: uid
+										}
+									};
+									var url=host+"user/info/CropImgForApp"
+//									var url = Quickos.api.url('user/info/CropImgForApp');
+									api.ajax({
+										url: url,
+										dataType: 'json',
+										data: datas,
+										method: 'post'
+									}, function(ret, err) {
+//										console.log("---------------"+JSON.stringify(ret))
+										//console.log("---------------"+JSON.stringify(err))
+										//alert(JSON.stringify(ret))
+										if(ret) {
+											if(ret.isSuccess) {
+												$(".logo-top .logo-img-content .progressBar").css({
+													"line-height": "80px"
+												}).text("✔");
+												//在个人中心页面监听更新
+												api.sendEvent({
+													name: 'imgRefresh',
+													extra: {
+														url: ret.data
+													}
+												});
+
+												var json=JSON.parse(localStorage.getItem("userinfo"));
+												var avatar="/data/avatar"+ret.data.split("/data/avatar")[1];
+												json.avatar_middle=avatar;
+												json.avatar_big=avatar;
+												json.avatar_small=avatar;
+												localStorage.setItem("userinfo",JSON.stringify(json))
+
+												api.toast({
+													msg: "上传成功"
+												});
+											} else {
+												api.toast({
+													msg: "图片格式有误1"
+												});
+											}
+		                                    /*if(ret){
+		                                        api.sendEvent({
+		                                            name: 'reload'
+		                                        });
+		                                    }*/
+											//TODO:服务器正常返回JS返回err？
+										} else {
+											api.toast({
+												msg: "图片格式有误2"
+											});
+										}
+									});
+								} else if(ret.status == 0) {
+									var percent = ret.progress;
+									var top = 6 - (percent / 100) * 6;
+									var borderRadius = 100 - percent;
+									$(".logo-top .logo-img-content .progressBar").css({
+										"top": top + "rem",
+										"border-radius": borderRadius + "%",
+										"line-height": "1rem"
+									}).text(percent + "%");
+								}
+								//ret : icon,url,name,aid
+								//alert('res:'+JSON.stringify(ret));
+								//loadCut(res.url);
+							} else {
+								//alert('res:'+JSON.stringify(err));
+							}
+						});
+					}
+				}
+			})
+		};
+	</script>
+
+</html>

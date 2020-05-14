@@ -1,0 +1,477 @@
+<!doctype html>
+<html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+      <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+      <title>消息</title>
+      <link rel="stylesheet" href="../css/api.css">
+		  <link rel="stylesheet" href="../css/swiper.min.css">
+      <link rel="stylesheet" href="../css/PUBLIC.css">
+      <style media="screen">
+          html,body,.swiper-wrapper{width:100%;height:100%;}
+          .tab{width:100%;height:45px;background:#ffffff;box-shadow:0px 0px 5px rgba(0,0,0,0.1);display: flex;justify-content:space-around;align-items:center;position: relative;z-index:100}
+          .tab_item{width:50%;height:100%;line-height: 47px;text-align: center;color:#777;font-size:15px;position: relative;}
+          .status{height:10px;width:10px;border-radius:70px;background:#ccc}
+          .active_item{color:#E32416}
+          .active_item:after{content: "";position:absolute;bottom:0px;width:50%;border-bottom:1px solid #E32416;left:0;right:0;margin:auto}
+          .tab_page{width:100%;height:calc(100% - 45px);}
+          .swiper-slide{width:100%;height:100%;position: relative;}
+          .contacts-list,.message-list{width:100%;height:100%;overflow-x: scroll;background:#f5f5f5;box-sizing: border-box;padding-top:5px;position: relative;}
+          .contacts-item{width: 100%;height:auto;overflow: auto;}
+          .role_name{width:100%;height:45px;border-top:1px solid #f5f5f5;background:#fff;display: flex;align-items: center;justify-content: space-between;box-sizing: border-box;padding-left:20px;padding-right:20px;font-size:15px}
+          .contacts-item .department_name:before{margin-right:15px}
+          .role_user_list{width:100%;background:#fff;}
+          .user_item{width:100%;height:60px;background:#ffffff;display:flex;align-items: center;border-bottom:1px solid #f5f5f5}
+          .role_user_list .user_item:last-child{border:0}
+          .user_avatar{width:40px;height:40px;background:#999;border-radius:100px;margin-left:20px;}
+          .user_nickname{text-indent: 20px}
+          .message-list{position: relative;}
+          .empty{width:100%;height:150px;color:#ddd;text-align: center;position: absolute;top:0;bottom:0;left:0;right:0;margin:auto auto}
+          .empty i{font-size:90px;margin-bottom: 15px;display: block;}
+
+          .message-item{width:100%;height:70px;border-bottom:1px solid #f5f5f5;background:#fff;display: flex;align-items: center;box-sizing: border-box;padding-left:15px;padding-right:15px}
+          .avatar{width:45px;height:45px;background:#ccc;border-radius:100px;position: relative;}
+          .content_info{width:calc(100% - 45px);box-sizing: border-box;padding-left:10px;position: relative;}
+          .nickname{font-size:17px;}
+          .last_msg{max-width: 200px;font-size:13px;color:#999;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+          .datetime{font-size:11px;color:#999;position: absolute;right:0px;top:0px}
+          .red_point:before{content:"";width:12px;height:12px;background:#E32416;border-radius:100px;position: absolute;right:1px;top:1px}
+      </style>
+  </head>
+  <body>
+      <div class="tab" >
+          <div class="tab_item active_item" data-page="0">消息</div>
+          <div class="status"></div>
+          <div class="tab_item" data-page="1">联系人</div>
+      </div>
+      <div class="swiper-container tab_page">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+
+                <div class="message-list">
+                  <div class="empty">
+                      <i class="iconfont icongantanhao"></i>
+                      <div>没有消息</div>
+                  </div>
+                </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="contacts-list">
+
+              </div>
+            </div>
+        </div>
+      </div>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/jquery.min.js"></script>
+  <script type="text/javascript" src="../script/swiper.min.js"></script>
+  <script type="text/javascript" src="../script/public.js"></script>
+  <script type="text/javascript">
+      apiready = function() {
+        listenCloseAjax();
+          api.addEventListener({
+              name: 'login'
+          }, function(ret, err){
+              window.location.href=window.location.href
+          });
+
+          $(".tab_item").click(function(){
+              $(".tab_item").removeClass("active_item");
+              $(this).addClass("active_item");
+              mySwiper1.slideTo($(this).attr("data-page"), 300, false);
+          })
+
+          var mySwiper1 = new Swiper('.tab_page', {
+  					on: {
+  						slideChangeTransitionStart: function() {
+                $(".tab .tab_item").removeClass("active_item");
+                $(".tab .tab_item:eq("+this.activeIndex+")").addClass("active_item");
+
+  						},
+  					},
+  				})
+
+          function setImStatus(e){
+              if(e){
+                $(".status").css("background","#2cde00")
+              }else{
+                $(".status").css("background","#ff5200")
+              }
+
+          }
+
+
+          var userinfo=JSON.parse(localStorage.getItem("userinfo"));
+          var ws;
+          var reTryConnect=false;
+          var ping=false;
+
+
+          function ConnectWs(){
+
+              ws=new WebSocket(ws_host);
+
+              ws.onopen = function(evt){
+                 localStorage.setItem("websocket_status","1");
+                 setImStatus(true);
+                 if(reTryConnect){  //当连接成功后清除 重连定时器
+                   clearInterval(reTryConnect);
+                   reTryConnect = false;
+                 }
+                 if(ping === false){ // 当连接成功后 定时发送ping数据
+                   ping = setInterval(function(){
+                     ws.send(JSON.stringify({type:"ping"}))
+                   },10000)
+                 }
+                 //发送初始化请求
+                 ws.send(JSON.stringify({type:"init",uid:userinfo.uid}))
+              }
+
+              ws.onmessage = function(evt){
+                 var data=evt.data;
+                 if(isJSON(data)){
+                   data=JSON.parse(data);
+                   switch (data.type) {
+                     //-------------消息类型为初始化
+                     case 'init':
+                         if(data.login == true){
+                           //console.log("即时通讯认证成功");
+                         }else{
+                           //console.log("即时通讯认证失败");
+                         }
+                       break;
+                    //-------------消息类型为接受部门列表
+                     case 'contracts_list':
+                        var contacts_tpl='<div class="contacts-item" status="close"><div class="role_name"><div class="iconfont iconxiangyoujiantou department_name"></div><div class="contacts_count"></div></div><div class="role_user_list"></div></div>';
+                        contacts_tpl=$(contacts_tpl);
+                        $(".contacts-list div").remove();
+                        data.data.forEach(function(value,index,array){
+                            var dom=contacts_tpl.clone();
+                            dom.attr("data-deptid",value.deptid)
+                            dom.find(".department_name").text(value.deptname);
+                            dom.find(".contacts_count").text(value.count);
+                            $(".contacts-list").append(dom);
+                        })
+//                        console.log(JSON.stringify(data));
+                        break;
+                    //---------------------消息类型接受部门对应联系人列表
+                     case 'role_user':
+
+                        var user_tpl='<div class="user_item"><div class="user_avatar"></div><div class="user_nickname">张三</div></div>';
+                        user_tpl=$(user_tpl);
+
+                        if(data.status){
+
+                            $("[data-deptid="+data.deptid+"] .role_user_list div").remove();
+                            data.data.forEach(function(value,index,array){
+
+                                var dom=user_tpl.clone();
+                                dom.attr("data-uid",value.uid);
+                                dom.find(".user_avatar").css("background","url("+host_+value.avatar+"),url(../image/noavatar_big.jpg)").css("background-size","100% 100%").attr("data-avatar",value.avatar);
+                                dom.find(".user_nickname").text(value.realname)
+
+                                $("[data-deptid="+data.deptid+"] .role_user_list").append(dom);
+                            })
+                        }else{
+                          //console.log(data.msg);
+                        }
+
+                        break;
+                    //---------------------消息类型为收到新消息
+                     case 'newMessage':
+                         api.sendEvent({
+                             name: 'newMessage',
+                             extra: {
+                                 fromid: data.fromid,
+                                 fromname: data.fromname,
+                                 fromavatar:data.fromavatar,
+                                 content:data.content,
+                                 time:data.time
+                             }
+                         });
+
+                         var have = false;
+
+                         api.windows().forEach(function(value,index,array){
+                            if(value.name == 'newMessage_'+data.fromid){
+                                have = true;
+                            }
+                         })
+
+                         if(!have){
+                              api.toast({
+                                  msg: data.fromname+' : '+data.content,
+                                  duration: 3000,
+                                  location: 'bottom'
+                              });
+
+                           api.notification({
+                                vibrate:[100, 500, 200, 500, 300, 500, 400, 500],
+                                sound:'default',
+                                notify : {
+                                    title : data.fromname,
+                                    content : data.content,
+                                    extra : data.fromid
+                                },
+                            }, function(ret, err) {
+                                if(isJSON(localStorage.getItem("notify"))){
+                                  var notify=JSON.parse(localStorage.getItem("notify"));
+                                  if(notify.hasOwnProperty("msg_uid_"+data.fromid)){
+                                      notify["msg_uid_"+data.fromid].push(ret.id);
+                                  }else{
+                                      notify["msg_uid_"+data.fromid] = [ret.id];
+                                  }
+                                  localStorage.setItem("notify",JSON.stringify(notify))
+                                }else{
+                                  var notify={};
+                                  notify["msg_uid_"+data.fromid] = [ret.id];
+                                  localStorage.setItem("notify",JSON.stringify(notify))
+                                }
+                            });
+                         }
+                        break;
+                     case "messageLog":
+                           api.sendEvent({
+                               name: 'messageLog',
+                               extra: {
+                                   toid:data.toid,
+                                   data:data.data
+                               }
+                           });
+                        break;
+                     case "offlineMessage":
+                           addMsgLog({
+                                 fromid:data.fromid,
+                                 fromname:data.fromname,
+                                 fromavatar:data.fromavatar,
+                                 content:data.content,
+                                 time:getNowFormatDate(data.time)
+                           },false);
+                        break;
+                     default:
+
+                   }
+                 }else{
+                   //console.log(data);
+                 }
+
+                 //console.log(JSON.stringify(evt.data))
+              }
+
+              ws.onclose = function(){
+                localStorage.setItem("websocket_status","0");
+                setImStatus(false);
+                //连接被关闭创建重连定时器
+                if(!reTryConnect){
+                  reTryConnect=setInterval(function(){
+                    ConnectWs();
+                  },5000)
+                }
+                //连接被关闭清楚ping定时器
+                if(ping){
+                  clearInterval(ping);
+                  ping = false;
+                }
+                //console.log("websocket close connect");
+              }
+
+              ws.onerror = function(){
+                setImStatus(false);
+                //console.log("websocket connect error")
+              }
+          }
+
+          ConnectWs(); //启动即时通讯服务
+
+          api.addEventListener({
+              name:'offline'
+          }, function(ret, err){
+            clearInterval(reTryConnect);
+            reTryConnect = false;
+          });
+          api.addEventListener({
+              name:'online'
+          }, function(ret, err){
+              ConnectWs();
+          });
+
+
+          $(".contacts-list").on("click",".role_name",function(){
+              var deptid=$(this).parent().attr("data-deptid");
+              if($(this).parent().attr("status") == "close"){
+                $(this).parent().attr("status","open");
+                $(this).parent().find(".department_name").removeClass("iconxiangyoujiantou").addClass("iconxiangxiajiantou")
+                ws.send(JSON.stringify({type:"dept_user",deptid:deptid}))
+              }else{
+                $(this).parent().attr("status","close");
+                $(this).parent().find(".department_name").removeClass("iconxiangxiajiantou").addClass("iconxiangyoujiantou")
+                $(this).parent() .find(".role_user_list div").remove();
+              }
+
+          })
+
+          $(".contacts-list").on("click",".user_item",function(){
+              var title=$(this).find(".user_nickname").text();
+              var uid=$(this).attr("data-uid");
+              var avatar=$(this).find(".user_avatar").attr("data-avatar");
+
+              api.openTabLayout({
+                name: 'newMessage_'+uid,
+                url: 'widget://html/message/dialog.html',
+                title: title,
+                hideNavigationBar: false,
+                pageParam:{uid:uid,nickname:title,avatar:avatar},
+                navigationBar: {
+                    background: '#E32416',
+                    color: '#fff',
+                    leftButtons: [{
+                        iconPath: 'widget://image/leftArrow.png'
+                    }]
+              }})
+          })
+          $(".message-list").on("click",".message-item",function(){
+              var title=$(this).find(".nickname").text();
+              var uid=$(this).attr("data-msg-uid");
+              var avatar=$(this).find(".avatar").attr("data-avatar");
+              if($("[data-msg-uid="+uid+"]").length > 0){
+                $("[data-msg-uid="+uid+"]").find(".avatar").removeClass("red_point")
+                setIsRead(uid)
+              }
+
+              api.openTabLayout({
+                name: 'newMessage_'+uid,
+                url: 'widget://html/message/dialog.html',
+                title: title,
+                hideNavigationBar: false,
+                pageParam:{uid:uid,nickname:title,avatar:avatar},
+                navigationBar: {
+                    background: '#E32416',
+                    color: '#fff',
+                    leftButtons: [{
+                        iconPath: 'widget://image/leftArrow.png'
+                    }]
+              }})
+          })
+
+          api.addEventListener({
+              name:"sendMessage"
+          }, function(ret, err){
+              var msg={
+                type:"message",
+                to_id:ret.value.to_uid,
+                msg:ret.value.msg
+              };
+              addMsgLog({
+                    fromid:ret.value.to_uid,
+                    fromname:ret.value.to_nickname,
+                    fromavatar:ret.value.to_avatar,
+                    content:ret.value.msg,
+                    time:ret.value.time
+              },true);
+              ws.send(JSON.stringify(msg))
+          });
+
+          api.addEventListener({
+              name:"getMessageLog"
+          }, function(ret, err){
+              var msg={
+                type:"getMessageLog",
+                toid:ret.value.toid,
+                fromid:ret.value.fromid
+              };
+              ws.send(JSON.stringify(msg))
+          });
+
+          var message_tpl='<div class="message-item"><div class="avatar"></div><div class="content_info"><div class="nickname"></div><div class="last_msg"></div><div class="datetime"></div></div></div>';
+          message_tpl=$(message_tpl);
+
+          api.addEventListener({
+              name: 'newMessage'
+          }, function(ret, err){
+            var msg=ret.value;
+            addMsgLog(msg,false)
+          });
+
+          if(isJSON(localStorage.getItem("msg_log"))){
+            var msg_log=JSON.parse(localStorage.getItem("msg_log"));
+            if(!msg_log.hasOwnProperty("user_"+userinfo.uid)){
+              return false;
+            }
+            msg_log=msg_log["user_"+userinfo.uid];
+            if(Object.keys(msg_log).length > 0){
+              $(".empty").remove();
+            }
+
+            for(var i in msg_log){
+              var msg_value=msg_log[i].msg;
+              var dom=message_tpl.clone();
+              dom.attr("data-msg-uid",msg_value.fromid);
+              dom.find(".avatar").css({background:"url("+host_+msg_value.fromavatar+"),url(../image/noavatar_big.jpg)",backgroundSize:"100% 100%"}).attr("data-avatar",msg_value.fromavatar)
+              if(msg_log[i].isRead == 0){
+                dom.find(".avatar").addClass("red_point");
+              }
+              dom.find(".nickname").text(msg_value.fromname);
+              dom.find(".last_msg").text(msg_value.content);
+              dom.find(".datetime").text(msg_value.time);
+              $(".message-list").append(dom);
+            }
+          }
+          //向消息面板添加或更新一条消息，并同步更新localStorage
+          function addMsgLog(msg,isSend){
+
+              $(".empty").remove();
+              $("[data-msg-uid="+msg.fromid+"]").remove();
+                  var dom=message_tpl.clone();
+                  dom.attr("data-msg-uid",msg.fromid);
+                  dom.find(".avatar").css({background:"url("+host_+msg.fromavatar+"),url(../image/noavatar_big.jpg)",backgroundSize:"100% 100%"}).attr("data-avatar",msg.fromavatar);
+                  if(!isSend){
+                    isSave=false;
+                    api.windows().forEach(function(value,index,array){
+                       if(value.name == 'newMessage_'+msg.fromid){
+                           isSave=true;
+                       }
+                    })
+                    if(!isSave){
+                      dom.find(".avatar").addClass("red_point")
+                    }
+                  }
+                  dom.find(".nickname").text(msg.fromname);
+                  dom.find(".last_msg").text(msg.content);
+                  dom.find(".datetime").text(msg.time);
+                  $(".message-list").prepend(dom);
+
+              //更新localstorge中的最后一条消息记录
+              if(isJSON(localStorage.getItem("msg_log"))){
+                  var msg_log=JSON.parse(localStorage.getItem("msg_log"));
+              }else{
+                  var msg_log={};
+              }
+              if(!msg_log.hasOwnProperty("user_"+userinfo.uid)){
+                  msg_log["user_"+userinfo.uid]={};
+              }
+              var log_json={};
+              log_json.msg = msg;
+              if(!isSend){
+                log_json.isRead = 0;
+              }else{
+                log_json.isRead = 1;
+              }
+              msg_log["user_"+userinfo.uid]["uid_"+msg.fromid]=log_json;
+              localStorage.setItem("msg_log",JSON.stringify(msg_log));
+
+          }
+
+          function setIsRead(uid){
+              var msg_log=JSON.parse(localStorage.getItem("msg_log"));
+              msg_log["user_"+userinfo.uid]["uid_"+uid].isRead = 1;
+              localStorage.setItem("msg_log",JSON.stringify(msg_log));
+          }
+
+
+
+      };
+  </script>
+
+</html>

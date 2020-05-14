@@ -1,0 +1,51 @@
+
+ .main
+{
+    background-image:url(../image/custom-icon/main.png) !important;
+}
+.main.active
+{
+    background-image:url(../image/custom-icon/main-active.png) !important;
+}
+
+.user
+{
+    background-image:url(../image/custom-icon/user.png) !important;
+}
+.user.active
+{
+    background-image:url(../image/custom-icon/user-active.png) !important;
+}
+
+.message
+{
+    background-image:url(../image/custom-icon/message.png) !important;
+}
+.message.active
+{
+    background-image:url(../image/custom-icon/message-active.png) !important;
+}
+.contact
+{
+    background-image:url(../image/custom-icon/contact.png) !important;
+}
+.contact.active
+{
+    background-image:url(../image/custom-icon/contact-active.png) !important;
+}
+.wait
+{
+    background-image:url(../image/custom-icon/wait.png) !important;
+}
+.wait.active
+{
+    background-image:url(../image/custom-icon/wait-active.png) !important;
+}
+.richeng
+{
+    background-image:url(../image/custom-icon/richeng.png) !important;
+}
+.richeng.active
+{
+    background-image:url(../image/custom-icon/richeng.png) !important;
+}

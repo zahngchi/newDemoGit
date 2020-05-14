@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+      <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+      <title>消息</title>
+      <link rel="stylesheet" href="../../css/api.css">
+      <link rel="stylesheet" href="../../css/PUBLIC.css">
+      <style media="screen">
+          html,body{width:100%;height:100%;overflow: hidden;background:#fff}
+          .message{width:100%;height:100%;box-sizing:border-box;padding-bottom:70px;background:#F0F0F4;overflow: scroll;}
+          .bottom_control{width:100%;height:50px;background:#ffffff;display: flex;align-items: center;position: fixed;bottom:0;z-index:10}
+          .message_text{width:calc(100% - 90px);height:40px;background:#f5f5f5;margin-left: 10px;border-radius:5px;text-indent: 10px}
+          .send{width:60px;text-align: center;height:40px;background:#E32416;line-height:40px;margin-left: 10px;color:#fff;border-radius:5px}
+          .message_receive_item{width:100%;box-sizing: border-box;padding-left:10px;display: flex;padding-top:10px}
+          .message_receive_item .avatar{width:40px;height:40px;background:#999;border-radius:100px;}
+          .message_receive_item .msg_info{font-size:11px;color:#555;padding-top:3px;}
+          .message_receive_item .nickname{text-indent: 10px;margin-right:5px}
+          .message_receive_item .msg_content{min-width: 20px;min-height: 40px;max-width: 220px;border-radius:5px;display: inline-block;float:left;background:#fff;margin-left:10px;margin-top:5px;box-sizing: border-box;padding:10px;position: relative;}
+          .message_receive_item .arrow{width:10px;height:10px;position: absolute;background: #fff;left:-5px;top:10px;transform:rotate(45deg);}
+
+          .message_send_item{width:100%;box-sizing: border-box;padding-right:10px;padding-top:10px;display: flex;justify-content:flex-end;}
+          .message_send_item .avatar{width:40px;height:40px;background:#999;border-radius:100px;}
+          .message_send_item .msg_info{font-size:11px;color:#555;padding-top:3px;text-align: right;margin-right:10px;}
+          .message_send_item .nickname{margin-right:5px}
+          .message_send_item .msg_content{min-width: 20px;min-height: 40px;max-width: 220px;border-radius:5px;display: inline-block;float:right;background:#ff5447;color:#fff;margin-right:10px;margin-top:5px;box-sizing: border-box;padding:10px;position: relative;}
+          .message_send_item .arrow{width:10px;height:10px;position: absolute;background:#ff5447;right:-5px;top:10px;transform:rotate(45deg);}
+      </style>
+  </head>
+  <body>
+      <div class="message">
+
+      </div>
+      <div class="bottom_control">
+        <!-- <div class="expression"></div> -->
+        <input type="text" class="message_text">
+        <div class="send">发送</div>
+      </div>
+  </body>
+  <script type="text/javascript" src="../../script/api.js"></script>
+  <script type="text/javascript" src="../../script/jquery.min.js"></script>
+  <script type="text/javascript" src="../../script/public.js"></script>
+  <script type="text/javascript">
+      apiready = function() {
+
+        listenCloseAjax();
+
+
+        var params=api.pageParam;
+        var userinfo=JSON.parse(localStorage.getItem("userinfo"));
+
+        //聊天窗口打开时 清除通知栏对应的消息通知
+        // if(isJSON(localStorage.getItem("notify"))){
+        //   var notify=JSON.parse(localStorage.getItem("notify"));
+        //   if(notify.hasOwnProperty("msg_uid_"+params.uid)){
+        //       notify["msg_uid_"+params.uid].forEach(function(value,index,array){
+        //         api.cancelNotification({
+        //             id: value
+        //         });
+        //       })
+        //   }
+        // }
+
+        $('.message_text').bind('keypress', function(event) {
+          if (event.keyCode == "13") {
+              sendMessage();
+          }
+        })
+        $(".send").click(function(){
+          sendMessage();
+        })
+
+        var send_tpl='<div class="message_send_item"><div class="content"><div class="msg_info"><span class="nickname"></span><span class="datetime"></span></div><div class="msg_content"><div class="arrow"></div><span></span></div></div><div class="avatar"></div></div>';
+        send_tpl=$(send_tpl);
+
+        function sendMessage(){
+
+            if(localStorage.getItem("websocket_status") == "0"){
+              api.toast({
+                  msg: '您当前已离线,无法发送',
+                  duration: 1500,
+                  location: 'bottom'
+              });
+              $(".message_text").focus();
+              return false;
+            }
+
+            var text=$(".message_text").val();
+            if(text == ""){
+              api.toast({
+                  msg: '请输入消息内容',
+                  duration: 1500,
+                  location: 'bottom'
+              });
+              $(".message_text").focus();
+              return false;
+            }
+            $(".message_text").focus().val("");
+
+
+
+            var send=send_tpl.clone();
+            send.find(".nickname").text(userinfo.realname)
+            send.find(".datetime").text(getNowFormatDate())
+            send.find(".msg_content span").text(text)
+            send.find(".avatar").css({background:"url("+host_+userinfo.avatar_middle+"),url(../../image/noavatar_big.jpg)",backgroundSize:"100% 100%"})
+            $(".message").append(send);
+            //$(".message").scrollTop($(".message")[0].scrollHeight);
+            $(".message").animate({scrollTop: $(".message")[0].scrollHeight}, 500);
+            api.sendEvent({
+                name: 'sendMessage',
+                extra: {
+                    to_uid: params.uid,
+                    msg: text,
+                    to_nickname:params.nickname,
+                    to_avatar:params.avatar,
+                    time:getNowFormatDate()
+                }
+            });
+        }
+        var receive_tpl='<div class="message_receive_item"><div class="avatar"></div><div class="content"><div class="msg_info"><span class="nickname"></span><span class="datetime"></span></div><div class="msg_content"><div class="arrow"></div><span></span></div></div></div>'
+        receive_tpl=$(receive_tpl);
+        api.addEventListener({
+            name: 'newMessage'
+        }, function(ret, err){
+          var msg=ret.value;
+          if(params.uid == msg.fromid){
+            var dom=receive_tpl.clone();
+            dom.find(".nickname").text(msg.fromname)
+            dom.find(".datetime").text(msg.time)
+            dom.find(".msg_content span").text(msg.content)
+            dom.find(".avatar").css({background:"url("+host_+msg.fromavatar+"),url(../../image/noavatar_big.jpg)",backgroundSize:"100% 100%"})
+            $(".message").append(dom);
+
+            //$(".message").scrollTop($(".message")[0].scrollHeight);
+            $(".message").animate({scrollTop: $(".message")[0].scrollHeight}, 500);
+          }
+        });
+
+        api.sendEvent({
+            name: 'getMessageLog',
+            extra: {
+                toid: params.uid,
+                fromid: userinfo.uid
+            }
+        });
+
+        api.addEventListener({
+            name: 'messageLog'
+        }, function(ret, err){
+          var msg=ret.value;
+          if(msg.toid == params.uid){
+              msg.data.forEach(function(value,index,array){
+                    if(value.toid == userinfo.uid){//收到的消息
+                      var dom=receive_tpl.clone();
+                      dom.find(".nickname").text(value.fromname)
+                      dom.find(".datetime").text(getNowFormatDate(value.timeline))
+                      dom.find(".msg_content span").text(value.content)
+                      dom.find(".avatar").css({background:"url("+host_+value.fromavatar+"),url(../../image/noavatar_big.jpg)",backgroundSize:"100% 100%"})
+                      $(".message").append(dom);
+                    }else{//发出的消息
+                      var send=send_tpl.clone();
+                      send.find(".nickname").text(userinfo.realname)
+                      send.find(".datetime").text(getNowFormatDate(value.timeline))
+                      send.find(".msg_content span").text(value.content)
+                      send.find(".avatar").css({background:"url("+host_+userinfo.avatar_middle+"),url(../../image/noavatar_big.jpg)",backgroundSize:"100% 100%"})
+                      $(".message").append(send);
+                    }
+
+              })
+
+              $(".message").scrollTop($(".message")[0].scrollHeight);
+                //$(".message").animate({scrollTop: $(".message")[0].scrollHeight}, 500);
+          }
+        });
+
+      };
+  </script>
+
+</html>

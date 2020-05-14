@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/oldCss/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/oldCss/style.css"/>
+    <link rel="stylesheet" href="../../css/oldCss/sm.css">
+    <link rel="stylesheet" href="../../css/oldCss/sm-extend.css">
+    <link rel="stylesheet" href="../../css/oldCss/add-css.css">
+    <link rel="stylesheet" href="../../css/oldCss/userSelect.css">
+    <link rel="stylesheet" href="../../css/oldCss/font-face.css">
+    <link rel="stylesheet" href="../../css/oldCss/workflow.css">
+    <link rel="stylesheet" href="../../script/oldJs/TimeTree/timeTree.css">
+    <style media="screen">
+      body{background:#F0F0F4}
+      .margin-t-tab{margin-top:30px;}
+    </style>
+</head>
+<body>
+<header class="bar bar-nav">
+    <a class="icon pull-left backbtn"  href="javascript:;" onclick="closeWin();"></a>
+    <h1 class='title'>工作办理详情页</h1>
+</header>
+<div class="buttons-row fix-header-top">
+    <a href="#tab1-1" class="tab-link active button">工作表单</a>
+    <!--<a href="#tab1-2" class="tab-link button">工作关联</a>-->
+    <a href="#tab1-3" class="tab-link button">办理步骤</a>
+</div>
+<div class="content">
+    <div class="tabs margin-t-tab">
+
+        <div class='tab active' id='tab1-1'>
+            <div class="list-block">
+                <div id="cardContent" class="hidden" style="overflow-x:hidden">
+                    <form id="form_data">
+                        <div class="card" style="margin-top:10px;">
+                            <div class="card-header" id="title">
+                            </div>
+                        </div>
+                        <div id="content">
+                            <!--表单内容-->
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <div class='tab' id='tab1-2'>
+            <div class="list-block padding-t-5">
+                <div class="card">
+                    <div class="card-header">
+                        <span>关联工作</span>
+                    </div>
+                    <div class="card-content" id="selected-related-content">
+                        <div style="width:100%;height:10rem;text-align:center">
+                            <img style="display:inline-block;height:30%;margin-top:3rem;" src="../../image/noContent_yet.png">
+                            <br>
+                            <span>暂没内容</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-bottom:3rem;">
+                    <div class="card-header">
+                        <span>关联审批业务</span>
+                    </div>
+                    <div class="card-content" id="selected-cxs-content">
+                        <div style="width:100%;height:10rem;text-align:center">
+                            <img style="display:inline-block;height:30%;margin-top:3rem;" src="../../image/noContent_yet.png">
+                            <br>
+                            <span>暂没内容</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class='tab' id='tab1-3'>
+            <div class="list-block padding-t-5">
+                <div class="card">
+                    <div class="card-content" id="stepContent">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer" style="height:55px;">
+    <div class="row workflowBtn pop-content" id="btnConntent" style="height:55px;">
+
+    </div>
+</div>
+
+<div class="pop-target attach-content" id="attach-content">
+    <div class="card" style="margin:0;max-height:70%;overflow:auto;">
+        <div class="card-content" id="attachContent">
+
+        </div>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript" src="../../script/oldJs/office.sdk.js" charset='utf-8'></script>
+<script type="text/javascript" src="../../script/oldJs/api.js"></script>
+<script type='text/javascript' src='../../script/oldJs/zepto.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='../../script/oldJs/sm.js' charset='utf-8'></script>
+<script type="text/javascript" src="../../script/oldJs/quickos.js"></script>
+<script type='text/javascript' src='../../script/oldJs/sm-extend.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='../../script/oldJs/doT.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='../../script/oldJs/lib/workflow.template.js' charset='utf-8'></script>
+<script type='text/javascript' src='../../script/oldJs/lib/workflow.jquery.js' charset='utf-8'></script>
+<script type='text/javascript' src='../../script/oldJs/userSelect.js' charset='utf-8'></script>
+<script type="text/javascript">
+    $api.loadJs($api.getIp()+"/data/org/department.js");
+    $api.loadJs($api.getIp()+"/data/org/user.js");
+</script>
+
+<script type="text/template" id="btn-tpl">
+    {{if(typeof it.isrollback!=="undefined"){}}
+        {{ if(it.isrollback){ }}
+        <div class="col-50 item" data-target="attach-content"><div class="bottomControlButton attchButton"></div><div class="bottomControlText">附件(<span id="attach-count">0</span>)</div></div>
+        <div class="col-50 item" onclick="takeback()"><div class="bottomControlButton returnButton"></div><div class="bottomControlText">收回</div></div>
+        {{ }else{ }}
+        <div class="col-100 item" data-target="attach-content"><div class="bottomControlButton attchButton"></div><div class="bottomControlText">附件(<span id="attach-count">0</span>)</div></div>
+        {{ } }}
+    {{ } else {}}
+        <div class="col-100 item" data-target="attach-content"><div class="bottomControlButton attchButton"></div><div class="bottomControlText">附件(<span id="attach-count">0</span>)</div></div>
+    {{ } }}
+</script>
+<script>
+    $(document).on("click",".pop-content .item",function()
+    {
+        $(".pop-target").removeClass("pop-target-active");
+        var targetId=$(this).attr("data-target");
+        $("#"+targetId).toggleClass("pop-target-active")
+    })
+    $(".pop-target").click(function()
+    {
+        $(this).removeClass("pop-target-active");
+    });
+    apiready=function()
+    {
+      api.addEventListener({
+		      name:'navitembtn'
+		  },function(ret, err){
+		    if(ret.type=="left"){
+		      api.closeWin();
+		    }
+		  });
+        if(api.pageParam.key)
+        {
+            $.showPreloader();
+            setTimeout(function()
+            {
+                $.hidePreloader();
+            },10000);
+            var posturl=Quickos.api.url("mobile/work/formdetail")+"&key="+api.pageParam.key;
+            $(function()
+            {
+                Quickos.api.get(posturl,function(ret,err)
+                {
+                    var renderdata=ret.data;
+                    //控制按钮权限
+                    var btnTem=doT.template($("#btn-tpl").text());
+                    if(api.pageParam.type)
+                    {
+                        if(api.pageParam.type==="monitor")
+                        {
+                            renderdata.isrollback=false;
+                        }
+                    }
+                    var btnTemStr=btnTem(renderdata);
+                    $("#btnConntent").html(btnTemStr);
+
+                    var key=api.pageParam.key;
+                    $.extend(renderdata,{key:key});
+                    $("#content").workflow(renderdata,function(ret)
+                    {
+                        $.hidePreloader();
+                        calSum();
+                        $("#process-content").css("display","none");
+                        $("#cardContent").removeClass("hidden");
+                    });
+                    $(document).on("click",".workflow-item h3",function()
+                    {
+                        $(this).toggleClass("workflow-item-title-active");
+                        var $listBlock=$(this).next(".list-block");
+                        $listBlock.toggleClass("workflow-item-active")
+                    });
+
+                    //展开控件项详情
+                    $(document).on("click",".list-view-item",function()
+                    {
+                        var target=$(this).attr("data-toggle");
+                        $(this).nextAll("."+target).toggleClass("list-view-sub-active");
+                    });
+
+                    $(document).on("click",".pop-content .item",function()
+                    {
+                        $(".pop-target").removeClass("pop-target-active");
+                        var targetId=$(this).attr("data-target");
+                        $("#"+targetId).toggleClass("pop-target-active");
+                    });
+                    $(".pop-target").click(function()
+                    {
+                        $(this).removeClass("pop-target-active");
+                    });
+                    //干掉冒泡f**k
+                    $(" .attach-content .card,.operate-content .operate").click(function(event)
+                    {
+                        event.stopPropagation();
+                    });
+
+                    //展开控件项详情f
+                    $(document).on("click",".list-view-item",function()
+                    {
+                        var target=$(this).attr("data-toggle");
+                        $(this).next().find("."+target).toggleClass("list-view-sub-active");
+                    });
+                    initValue();
+                });
+            });
+        }
+        closeWin=function()
+        {
+            //更新列表页面
+            var initName=api.pageParam.closeToWin;
+            api.sendEvent({
+                name: initName,
+                extra: {}
+            });
+            setTimeout(function()
+            {
+                api.closeWin();
+            },500);
+        }
+
+        //计算总数
+        calSum=function()
+        {
+            $("input[data-sum]").each(function()
+            {
+                var param=$(this).attr("data-sum"),
+                    sum=0;
+                $("span[data-sum-param='"+param+"']").each(function()
+                {
+                    var paramValue=$(this).text()?$(this).text():0;
+                    sum+=parseInt(paramValue);
+                });
+                $(this).val(sum);
+            });
+        };
+
+        //收回操作
+        takeback=function()
+        {
+            $.confirm("您确定要收回该工作吗？","提示",function()
+            {
+                $.showPreloader();
+                var url=Quickos.api.url("mobile/work/takeBack")+"&key="+api.pageParam.key;
+                Quickos.api.get(url,function(ret,err)
+                {
+                    $.hidePreloader();
+                    if(ret.isSuccess)
+                    {
+                        api.toast({
+                            msg:"回收成功",
+                            duration:1000
+                        });
+                        setTimeout(function()
+                        {
+                            closeWin();
+                        },1000);
+                    }
+                    else
+                    {
+                        api.toast({
+                            msg:ret.msg,
+                            duration:1000
+                        });
+                    }
+                });
+            });
+        };
+
+
+        //处理提交的form数据 转成json格式
+        function handleFormData(data)
+        {
+            var postData={};
+            for (var x in data)
+            {
+                postData[data[x].name]=data[x].value;
+            }
+            return postData;
+        }
+        function initValue()
+        {
+            $("[data-select-type='department'],[data-select-type='user']").each(function()
+            {
+                var valueStr=$(this).find("input").val();
+                var valueArr=valueStr.split(",");
+                var renderArr=[];
+                var renderItemObj={};
+                var type=$(this).attr("data-select-type");
+                //遍历处理渲染的数据
+                for(var x in valueArr)
+                {
+                    //干掉u_
+                    var id=valueArr[x].substr(2);
+                    if(type==="department")
+                    {
+                        var depname=Ibos.data.department[valueArr[x]].text;
+                        renderItemObj={
+                            depid:id,
+                            depname:depname
+                        }
+                    }
+                    else if(type==="user")
+                    {
+                        var realname=Ibos.data.user[valueArr[x]].text;
+                        renderItemObj={
+                            uid:id,
+                            realname:realname
+                        }
+                    }
+                    renderArr.push(renderItemObj);
+                }
+                //渲染默认值
+                var tpl;
+                if(type==="department")
+                {
+                    tpl=WorkFlowTemplate.selectDepItemTpl();
+                }
+                else if(type==="user")
+                {
+                    tpl=WorkFlowTemplate.selectUserItemTpl();
+                }
+                //初始化插件选择的值
+                var dataSelected=JSON.stringify(renderArr);
+
+                $(this).attr("data-selected",dataSelected);
+
+                var tem=doT.template(tpl);
+
+                var temStr=tem(renderArr);
+
+                var name=$(this).find("input").attr("name");
+                $("#"+name).html(temStr);
+            });
+//           console.log($("#content").html());
+            var size = $('b[data-type="signimg"]').size();
+//          console.log(size)
+			for(var i = 0; i < size; i++) {
+				var text = $('b[data-type="signimg"]').find('input').eq(i).val();
+				if(text!=undefined){
+					if(text.length > 23) {
+            console.log(text);
+            var imgUrl=$api.getIp()+text.match(/.(\S*)/)[1]
+//					$('b[data-type="signimg"]').eq(i).text("");
+					$('b[data-type="signimg"]').eq(i).append("<img data-type='signimg' src='" + imgUrl + "' style='width:100%'/>");
+					//          		$('img[data-type="signimg"]').eq(i).attr({"src":text});
+				}
+				}
+			}
+        }
+    };
+</script>
+</html>

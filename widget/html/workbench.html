@@ -1,0 +1,470 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>工作台</title>
+		<link rel="stylesheet" href="../css/api.css">
+		<link rel="stylesheet" href="../css/PUBLIC.css">
+		<link rel="stylesheet" href="../css/swiper.min.css">
+		<style media="screen">
+			.banner {
+				width: 100%;
+				height: 200px;
+				/*background: url(../image/banner.png);
+				background-image: url(../image/banner.png);*/
+				background-size: 100% 100%;
+			}
+
+			.swiper-slide {
+				position: relative;
+			}
+
+			.article-box {
+				width: calc(100% - 40px);
+				height: 50px;
+				margin: auto;
+				position: relative;
+				z-index: 200;
+				margin-top: -25px;
+				box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+				border-radius: 10px;
+				background-color: #FFFFFF;
+				margin-bottom: 25px;
+			}
+
+			.article-box .swiper-slide {
+				display: flex;
+				flex-flow: row;
+				justify-content: space-between;
+				width: 100%;
+				height: 100%;
+				margin: auto;
+				line-height: 50px;
+				text-align: center;
+				padding: 0 20px;
+				box-sizing: border-box;
+			}
+
+			.article-main {
+				display: flex;
+			}
+
+			.article-main div:nth-child(1) {
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				max-width: 65%;
+				width:120px;
+				/*background-color: red;*/
+			}
+
+			.article-main div:nth-child(2) {
+				margin-left: 10px;
+			}
+			.work{
+				display: flex;
+				flex-flow: row;
+				justify-content: space-between;
+			}
+			.work > div{
+				width: 100%;
+				line-height: 0;
+				position: relative;
+			}
+			.work-zhanwei{
+				width:100%;height:0;padding-bottom:100%;
+			}
+			.work-box{
+				background-color: #FFFFFF;
+				color: #555555;
+				border: 1px #f5f5f5 solid;
+			}
+			.work-content{
+				position: absolute;
+				top: 0;
+				height: 90px;
+				width: 70px;
+				line-height: normal;
+				display: flex;
+				flex-flow: column;
+				align-items: center;
+				margin: auto auto;
+				left: 0;
+				top: 0;
+				right: 0;
+				bottom: 0;
+			}
+			.work-content div{
+				margin-top: 10px;
+			}
+		</style>
+	</head>
+
+	<body style="background-color: #F0F0F4;">
+		<div class="">
+			<div class="swiper-container banner">
+				<div class="swiper-wrapper">
+
+				</div>
+			</div>
+			<div class="swiper-container article-box">
+				<div class="swiper-wrapper">
+
+				</div>
+			</div>
+			<div class="work">
+				<div class="work-box" id="todo">
+					<div class="work-zhanwei" style=""></div>
+					<div class="work-content">
+						<img src="../image/todo.png" width="60"/>
+						<div class="">
+							我的待办
+						</div>
+					</div>
+				</div>
+				<div class="work-box" id="fawen">
+					<div class="work-zhanwei" style=""></div>
+					<div class="work-content">
+						<img src="../image/fawen.png" width="60"/>
+						<div class="">
+							发文管理
+						</div>
+					</div>
+				</div>
+				<div class="work-box" id="shouwen">
+					<div class="work-zhanwei" style=""></div>
+					<div class="work-content">
+						<img src="../image/shouwen.png" width="60"/>
+						<div class="">
+							收文管理
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="work">
+				<div class="work-box" id="article">
+					<div class="work-zhanwei" style=""></div>
+					<div class="work-content">
+						<img src="../image/announcement.png" width="60"/>
+						<div class="">
+							通知公告
+						</div>
+					</div>
+				</div>
+				<div class="work-box" id="message">
+					<div class="work-zhanwei" style=""></div>
+					<div class="work-content">
+						<img src="../image/message.png" width="60"/>
+						<div class="">
+							即时通讯
+						</div>
+					</div>
+				</div>
+				<div class="work-box" id="notifiy">
+					<div class="work-zhanwei" style=""></div>
+					<div class="work-content">
+						<img src="../image/notifiy.png" width="60"/>
+						<div class="">
+							消息提醒
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+	</body>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/jquery.min.js"></script>
+	<script type="text/javascript" src="../script/swiper.min.js"></script>
+	<script type="text/javascript" src="../script/public.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			api.setNavBarAttr({
+			    leftButtons: [{
+						text:"  退出",
+						color:"#fff",
+						fontSize:17,
+			    }]
+			});
+			api.addEventListener({
+				name: 'navitembtn'
+			}, function(ret, err) {
+        if(ret.type=="left"){
+					api.closeWidget();
+        }
+			});
+			// app退出的时候需要重新登陆
+			function getQueryString(name){
+				var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+				var r = window.location.search.substr(1).match(reg);
+				if(r != null){
+					return unescape(r[2]);
+				}
+				return null;
+			}
+			if(getQueryString('from') != 'refresh'){
+				localStorage.removeItem("userinfo");
+			}
+			api.addEventListener({
+					name: 'login'
+			}, function(ret, err){
+					api.setTabBarAttr({
+							index: 0
+					});
+         if(getQueryString('r') == null){
+					 	window.location.href=window.location.href+"?r="+Math.random()+"&from=refresh";
+				 }
+			});
+
+			if(!localStorage.getItem("userinfo")) {
+				api.openWin({
+					name: 'login',
+					url: './login.html',
+					pageParam: {
+						name: 'test'
+					}
+				});
+
+				return false;
+			}
+
+			$.get(host+"mobile/default/IsGuest",{},function(data){
+
+				var data=JSON.stringify(data);
+				if(isJSON(data)){
+				}else{
+					api.openWin({
+						name: 'login',
+						url: './login.html',
+						pageParam: {
+							name: 'test'
+						}
+					});
+
+					return false;
+				}
+			})
+
+
+			var userinfo=JSON.parse(localStorage.getItem("userinfo"));
+
+				var param={
+	            uid: userinfo.uid,
+	            type: 'done',
+	            start: 0,
+	            length: 5
+      		};
+			var banner_slide=$('<div class="swiper-slide"></div>');
+			var article_slide='<div class="swiper-slide"><div class="article-main"><div id="article-title">无标题</div><div id="article-author"></div></div><div class="article-date"></div></div>';
+			article_slide=$(article_slide);
+			// $.get(host+"mobile/default/IsGuest",{},function(data){
+			// 	console.log(JSON.stringify(data));
+			// })
+
+			$.get(host+"mobile/article/Artlist",param,function(data){
+				if(data.data.length==0){
+					var banner=banner_slide.clone();
+					banner.css({background:"url(../image/banner.png)",backgroundSize:"100% 100%"})
+					$(".banner .swiper-wrapper").append(banner);
+
+					var article=article_slide.clone();
+					article.find("#article-title").text("暂无通知公告")
+					$(".article-box .swiper-wrapper").append(article);
+				}
+				data.data.forEach(function(value,index,array){
+						var banner=banner_slide.clone();
+						var article=article_slide.clone();
+						if(value.cover_url==''){
+							banner.css({background:"url(../image/banner.png)",backgroundSize:"100% 100%"})
+
+						}else{
+							banner.css({background:"url("+value.cover_url+")",backgroundSize:"100% 100%"})
+
+						}
+						article.find("#article-title").text(value.subject)
+						article.find("#article-author").text(value.author)
+						var date=getNowFormatDate(value.addtime);
+						date=date.split(" ")[0];
+						article.find(".article-date").text(date)
+						$(".banner .swiper-wrapper").append(banner);
+						$(".article-box .swiper-wrapper").append(article);
+				})
+				initSlider();
+			})
+
+			function initSlider(){
+				var mySwiper1 = new Swiper('.banner', {
+					autoplay: {
+						delay: 3000,
+						stopOnLastSlide: false,
+						disableOnInteraction: false,
+					},
+					on: {
+						slideChangeTransitionStart: function() {
+							mySwiper2.slideTo(this.activeIndex, 300, false);
+						},
+					},
+				})
+				var mySwiper2 = new Swiper('.article-box', {
+					autoplay: {
+						delay: 3000,
+						stopOnLastSlide: false,
+						disableOnInteraction: false,
+					},
+					on: {
+						slideChangeTransitionStart: function() {
+							mySwiper1.slideTo(this.activeIndex, 300, false);
+						},
+					},
+				})
+			}
+
+
+
+
+
+			$(".article-box").on("click",".swiper-slide",function(){
+				api.openTabLayout({
+					name: 'pstamp',
+					url: 'widget://html/center/article_list.html',
+					title: '通知公告',
+					hideNavigationBar: false,
+					navigationBar: {
+						background: '#E32416',
+						color: '#fff',
+						shadow: "#E32416",
+						leftButtons: [{
+							iconPath: 'widget://image/leftArrow.png'
+						}]
+					}
+				});
+			})
+			$(".banner").on("click",".swiper-slide",function(){
+				api.openTabLayout({
+					name: 'pstamp',
+					url: 'widget://html/center/article_list.html',
+					title: '通知公告',
+					hideNavigationBar: false,
+					navigationBar: {
+						background: '#E32416',
+						color: '#fff',
+						shadow: "#E32416",
+						leftButtons: [{
+							iconPath: 'widget://image/leftArrow.png'
+						}]
+					}
+				});
+			})
+			$("#todo").click(function(){
+          api.openTabLayout({
+				    name: 'todo',
+				    url: 'widget://html/workbench/todo.html',
+				    title: '我的待办',
+				    hideNavigationBar: false,
+				    navigationBar: {
+				        background: '#E32416',
+				        color: '#fff',
+				        leftButtons: [{
+				            iconPath: 'widget://image/leftArrow.png'
+				        }]
+				    }
+				});
+            })
+			$("#fawen").click(function(){
+          api.openTabLayout({
+				    name: 'fawen',
+				    url: 'widget://html/workbench/fawen.html',
+				    title: '发文管理',
+				    hideNavigationBar: false,
+				    navigationBar: {
+				        background: '#E32416',
+				        color: '#fff',
+				        leftButtons: [{
+				            iconPath: 'widget://image/leftArrow.png'
+				        }]
+				    }
+				});
+            })
+			$("#shouwen").click(function(){
+            	api.openTabLayout({
+				    name: 'shouwen',
+				    url: 'widget://html/workbench/shouwen.html',
+				    title: '收文管理',
+				    hideNavigationBar: false,
+				    navigationBar: {
+				        background: '#E32416',
+				        color: '#fff',
+				        leftButtons: [{
+				            iconPath: 'widget://image/leftArrow.png'
+				        }]
+				    }
+				});
+			});
+			$("#article").click(function(){
+            	api.openTabLayout({
+				    name: 'article',
+				    url: 'widget://html/center/article_list.html',
+				    title: '通知公告',
+				    hideNavigationBar: false,
+				    navigationBar: {
+				        background: '#E32416',
+				        color: '#fff',
+				        leftButtons: [{
+				            iconPath: 'widget://image/leftArrow.png'
+				        }],
+								// rightButtons:
+						    // [{
+						    //     text:"写邮件",
+						    //     color:"#fff",
+						    //     fontSize:15
+						    // }]
+				    }
+				});
+      })
+			$("#message").click(function(){
+            	api.openTabLayout({
+				    name: 'message',
+				    url: 'widget://html/message.html',
+				    title: '即时通讯',
+				    hideNavigationBar: false,
+				    navigationBar: {
+				        background: '#E32416',
+				        color: '#fff',
+				        leftButtons: [{
+				            iconPath: 'widget://image/leftArrow.png'
+				        }],
+								// rightButtons:
+						    // [{
+						    //     text:"新增",
+						    //     color:"#fff",
+						    //     fontSize:15
+						    // }]
+
+				    }
+				});
+			});
+			$("#notifiy").click(function(){
+            	api.openTabLayout({
+				    name: 'notifiy',
+				    url: 'widget://html/workbench/notifiy.html',
+				    title: '消息提醒',
+				    hideNavigationBar: false,
+				    navigationBar: {
+				        background: '#E32416',
+				        color: '#fff',
+				        leftButtons: [{
+				            iconPath: 'widget://image/leftArrow.png'
+				        }]
+				    }
+				});
+			});
+
+
+		};
+	</script>
+
+</html>

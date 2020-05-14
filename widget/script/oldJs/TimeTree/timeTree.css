@@ -1,0 +1,106 @@
+
+@font-face
+{
+    font-family:'myFont';
+    src:url(./font/icomoon.eot);
+    src:url(./font/icomoon.eot) format('embedded-opentype'),
+    url(./font/icomoon.woff) format('woff'),
+    url(./font/icomoon.ttf) format('truetype'),
+    url(./font/icomoon.svg)format('svg');
+    font-weight:normal;
+    font-style:normal
+}
+.f
+{
+    display:inline-block;
+    font-family:myFont;
+    font-style:normal;
+    font-weight:normal;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    font-size:5rem;
+}
+.f-not:before {
+    content: "\e902";
+    color:darkred;
+}
+.f-wait:before {
+    content: "\e901";
+}
+.f-ok:before {
+    content: "\e900";
+    color:darkgreen;
+}
+.time-tree-content
+{
+    width:300px;
+    min-height:100px;
+    position:relative;
+    overflow:hidden;
+    margin:0 auto;
+}
+.time-tree-content .time-tree-items
+{
+    width:90%;
+    min-height:100px;
+    margin:40px auto;
+}
+.time-tree-content .time-tree-items .time-tree-item
+{
+    width:100%;
+    background-color:white;
+    min-height:50px;
+    height:auto;
+    position:relative;
+}
+.time-tree-content .time-tree-items .time-tree-item .time-tree-item-content
+{
+    width:100%;
+    position:relative;
+    right:0;
+    border-left:3px solid cornflowerblue;
+    padding-top:0;
+    padding-left:40px;
+    padding-right:10px;
+    padding-bottom:20px;
+    word-break: break-all;
+    box-sizing: border-box;
+    min-height:50px !important;
+
+}
+.time-tree-content .time-tree-items .time-tree-item .time-tree-item-content p
+{
+    min-height:50px;
+    margin-top:0;
+    font-family:微软雅黑;
+}
+.time-tree-content .time-tree-items .time-tree-item .time-tree-item-content p .time-tree-detail
+{
+    font-size:0.7rem;
+}
+.time-tree-content .time-tree-items .time-tree-item .time-tree-item-content .time-tree-point
+{
+    height:30px;
+    width:30px;
+    background-color:white;
+    position:absolute;
+    left:-16.5px;
+    border-radius:50%;
+    top:-3px;
+    color:#E32416;
+    text-align:center;
+    line-height: 30px;
+    font-size:1.5rem;
+}
+.time-tree-content .time-tree-items .time-tree-item:last-child .time-tree-item-content
+{
+   border-left:none;
+}
+.time-tree-content .time-tree-items .time-tree-item:last-child .time-tree-item-content .time-tree-point
+{
+    left:-13.5px;
+}
+.f-done:before
+{
+    content:'●';
+}

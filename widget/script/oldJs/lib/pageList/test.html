@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../../css/style.css"/>
+
+    <link rel="stylesheet" href="./pageList.css">
+</head>
+<body>
+<div id="content">
+
+</div>
+
+</body>
+<script type="text/javascript" src="../../../script/api.js"></script>
+<script type='text/javascript' src='../../../script/zepto.min.js' charset='utf-8'></script>
+<script type="text/javascript" src="./pageList.js"></script>
+<script>
+   $("#content").pageList({
+       pullRefreshDone:function(ret)
+       {
+           var pullResfresh=ret.pullRefresh;
+            setTimeout(function()
+            {
+                pullResfresh.cancelLoading();
+            },3000)
+       },
+       toBottomDone:function(ret)
+       {
+           if(ret.page===4)
+           {
+               PageList.finishLoading();
+               return false;
+           }
+           console.log(ret);
+           var returnObj=ret;
+            setTimeout(function(){
+                returnObj.listDom.append("<h3>3333333</h3><h3>3333333</h3><h3>3333333</h3><h3>3333333</h3><h3>3333333</h3><h3>3333333</h3>");
+                PageList.hideLoading();
+            },2000);
+       },
+       init:function(ret)
+       {
+           var temObj=ret;
+           temObj.listDom.append("<h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1><h1>sdfdsfdsfdsf</h1>");
+       },
+       //加载时（加载中）自定义定制
+       showloading:function()
+       {
+
+       },
+        //加载时（关闭）自定义定制
+        hideloading:function()
+        {
+
+        }
+
+   })
+</script>
+</html>

@@ -1,0 +1,73 @@
+@import "http://192.168.51.231:8090/static/iconfont/iconfont.css";
+/*公司10服务器地址*/
+/*@import "http://10.200.55.6:8090/static/iconfont/iconfont.css";*/
+/*客户正式服地址*/
+/*@import "http://ma23092218.iok.la:31786/pc_test/static/iconfont/iconfont.css"; */
+/*公司10服务器花生壳代理地址*/
+@font-face {
+  font-family: 'icon';
+  src: url("res/icomoon.ttf");
+}
+@keyframes xuanzhuan{
+     0%{transform:rotate(0deg)}
+    50%{transform:rotate(180deg)}
+   100%{transform:rotate(360deg)}
+}
+:root{
+  --main:#E32416;
+  /*--fontGrey:rgb(80,80,80);
+  --success:rgb(62,189,0);
+  --error:rgb(232,94,68);
+  --money:rgb(255,85,0);*/
+}
+a{display: block;}
+.icon{
+  font-family: 'icon';
+}
+.ani{
+  transition:all 300ms;
+ -moz-transition:all 300ms;
+ -webkit-transition:all 300ms;
+ -o-transition:all 300ms;
+}
+
+
+html,body{
+    height: 100%;
+}
+input{outline: none}
+x-checkbox{width:1em;height:1em;font-weight: bold;display: inline-block;border:1px solid rgb(54,154,187);color:rgb(54,154,187);line-height: 1em;border-radius:50px;text-align:center;vertical-align:text-top;box-sizing: border-box;}
+
+a{color:rgb(54,154,187)}
+.disabled{pointer-events: none;cursor: default;color:#999 !important;}
+
+.radio{width:16px;height:16px;border:1px solid #E32416;border-radius: 50%;position: relative;}
+.radio_selected:before{content:"";width:14px;height:14px;background:#E32416;position: absolute;right:0;left:0;bottom:0;top:0;margin:auto auto;border-radius:50%}
+.header_{width:100%;height:44px;background:#e8e8e8;overflow: hidden;position: fixed;z-index:100;top:0;}
+.back_{width:44px;height:44px;text-align:center;line-height:44px;font-size:20px;color:#fff;position: absolute;left:0;top:0;z-index:2;}
+.title_{position: absolute;width:100%;text-align:center;font-size:18px;color:#fff;line-height:44px;z-index:1;}
+.button_{position: absolute;font-size:18px;color:#fff;line-height:44px;z-index:2;text-align:right;right:13px;}
+.button_:active{color:#000}
+.button{transition:all 100ms;
+-moz-transition:all 100ms;
+-webkit-transition:all 100ms;
+-o-transition:all 100ms;}
+.button:active{
+  -webkit-filter: brightness(0.9);
+  filter: brightness(0.9);
+}
+.page_content{overflow: auto;}
+.input_list{width:100%;display: flex;flex-direction: column;align-items:center;background:#fff;margin-top:10px;}
+.input_box{width:90%;min-height:50px;border-bottom:1px solid #f5f5f5;line-height:50px;color:rgb(80,80,80);display: flex;position: relative;}
+.input_box_right{position: absolute;right:0px;line-height:50px;color:rgb(54,154,187)}
+.input_box_title{width:30%;height:50px;}
+.input_box_input{width:70%;font-size:15px}
+.input_box_checkbox{display: flex;align-items:center;width:70%;color:#000}
+.input_box_checkbox > div{flex-grow:1;font-size:15px;}
+.input_box_select{display: flex;align-items:center;width:70%}
+.input_box_select > select{flex-grow:1;height:100%;}
+.complete_button{width:90%;height:50px;background:rgb(54,154,187);border-radius:5px;margin:10px auto;text-align:center;line-height:50px;color:#fff;font-size:16px;}
+.complete_button:active{-webkit-filter: brightness(0.8);filter: brightness(0.8)}
+select{text-align:center;outline: none;background:transparent;border:0;appearance:none;
+-moz-appearance:none;
+-webkit-appearance:none;font-size:15px;}

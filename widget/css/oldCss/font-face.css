@@ -1,0 +1,283 @@
+@font-face 
+{
+    font-family:'myFont';
+    src:url(./fonts/icomoon.eot);
+    src:url(./fonts/icomoon.eot) format('embedded-opentype'),
+        url(./fonts/icomoon.woff) format('woff'),
+        url(./fonts/icomoon.ttf) format('truetype'),
+        url(./fonts/icomoon.svg)format('svg');
+    font-weight:normal;
+    font-style:normal
+}
+.fa 
+{
+    display:inline-block;
+    font-family:myFont;
+    font-style:normal;
+    font-weight:normal;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    font-size:1rem;
+    vertical-align: middle;
+}
+.fa-little
+{
+    display:inline-block;
+    font-family:myFont;
+    font-style:normal;
+    font-weight:normal;
+    line-height:1;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    font-size:30px;
+}
+.fa-disagree:before {
+  content: "\e903";
+
+}
+.fa-agree:before {
+  content: "\e900";
+}
+.fa-approving:before {
+  content: "\e901";
+}
+.fa-canel:before {
+  content: "\e902";
+}
+.fa-wait_approve:before {
+  content: "\e904";
+}
+
+.fa-qiji:before {
+    content: "\e905";
+    font-size:2rem;
+}
+.fa-stamp:before {
+     content: "\e906";
+     font-size:3rem;
+ }
+.fa-stamp
+{
+    -webkit-transform: rotate(-10deg);
+    -moz-transform: rotate(-10deg);
+    -ms-transform: rotate(-10deg);
+    -o-transform: rotate(-10deg);
+    transform: rotate(-10deg);
+    -webkit-transform-origin:0% 100%;
+    -moz-transform-origin:0% 100%;
+    -ms-transform-origin:0% 100%;
+    -o-transform-origin:0% 100%;
+    transform-origin:0% 100%;
+    -webkit-transition: all 0.1s;
+    -moz-transition: all 0.1s;
+    -ms-transition: all 0.1s;
+    -o-transition: all 0.1s;
+    transition: all 0.1s;
+}
+.fa-stamp:hover
+{
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+    -webkit-transform-origin:0% 100%;
+    -moz-transform-origin:0% 100%;
+    -ms-transform-origin:0% 100%;
+    -o-transform-origin:0% 100%;
+    transform-origin:0% 100%;
+    -webkit-transition: all 0.1s;
+    -moz-transition: all 0.1s;
+    -ms-transition: all 0.1s;
+    -o-transition: all 0.1s;
+    transition: all 0.1s;
+}
+.fa-office:before {
+    content: "\e907";
+    font-size:2rem;
+}
+.fa-car:before {
+    content: "\e908";
+}
+.fa-relaxation:before {
+    content: "\e909";
+}
+.relaxation
+{
+    font-size:8rem;
+    color:#1284bf;
+}
+.fa-busty:before {
+    content: "\e90a";
+}
+.busty
+{
+    font-size:8rem;
+    color:#B28014;
+}
+.fa-stop:before {
+    content: "\e90b";
+}
+
+.fa-reload:before {
+    content: "\e90e";
+}
+
+.fa-refresh:before {
+    content: "\e90f";
+}
+
+.fa-search:before {
+    content: "\e910";
+}
+
+.fa-chat:before {
+    content: "\e911";
+}
+
+.fa-star:before {
+    content: "\e912";
+}
+
+.fa-clock:before {
+    content: "\e90d";
+}
+
+.fa-flag:before {
+    content: "\e913";
+}
+
+.fa-user:before {
+    content: "\e914";
+}
+
+.fa-mapmarker:before {
+    content: "\e915";
+}
+
+.fa-chart:before {
+    content: "\e916";
+}
+.fa-true:before {
+    content: "\ea10";
+}
+.stop
+{
+    font-size:8rem;
+    color:#B21426;
+}
+.fa-start:before {
+    content: "\e90c";
+}
+
+.fa-close:before {
+    content: "\ea0d";
+}
+
+.fa-plus:before {
+    content: "\e91a";
+}
+
+.fa-folder:before {
+    content: "\e92f";
+}
+
+.fa-remove:before {
+    content: "\e91a";
+}
+
+.fa-read-more:before {
+    content: "\e917";
+}
+
+.fa-more:before {
+    content: "\e918";
+}
+
+.fa-menu:before {
+    content: "\e9bb";
+}
+
+.fa-home:before {
+    content: "\e919";
+}
+
+.fa-sms:before {
+    content: "\e91b";
+}
+.fa-call:before {
+    content: "\e943";
+}
+.fa-right:before {
+    content: "\ea15";
+}
+.start
+{
+    font-size:8rem;
+    color:#0CA751;
+}
+.tj
+ {
+     color:#A30C2A;
+ }
+.jj
+{
+    color:#F22438;
+}
+.jqyjk
+{
+    color:#F5CD0A;
+}
+.xyj
+{
+    color:#0099FF;
+}
+.pj
+{
+    color:#00CD99;
+}
+.agree
+ {
+     color:#1fbe9e;
+ }
+.disagree
+{
+    color:#d2263a;
+}
+.approving
+{
+    color:#FD8D2D;
+}
+.canel
+{
+    color:#FD8D2D;
+}
+.wait_approve
+{
+    color:#FD8D2D;
+}
+.fa-c-agree {
+     background-color:#1fbe9e;
+    color:white;
+
+ }
+.fa-c-disagree
+{
+    background-color:#d2263a;
+    color:white;
+}
+.fa-c-approving
+{
+    background-color:#FD8D2D;
+    color:white;
+}
+.fa-c-canel
+{
+    background-color:#828282;
+    color:white;
+}
+.fa-c-wait_approve
+{
+	background-color:#FD8D2D;
+    color:white;
+}

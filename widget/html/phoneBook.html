@@ -1,0 +1,224 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>通讯录</title>
+		<link rel="stylesheet" href="../css/api.css">
+		<link rel="stylesheet" href="../css/PUBLIC.css">
+		<style media="screen">
+			body,html{
+				height: 100%;
+				width: 100%;
+			}
+			.search {
+				display: flex;
+				flex-flow: row;
+				padding: 10px 15px 10px 15px;
+			}
+
+			.search input {
+				background-color: #FFFFFF;
+				border-radius: 6px;
+				height: 35px;
+				width: 100%;
+				padding: 2px 5px;
+				text-indent:10px
+			}
+
+			.search a {
+				height: 35px;
+				line-height: 35px;
+				text-align: center;
+				padding-left: 15px;
+				display: none;
+			}
+
+			.phoneBook {
+				display: flex;
+				flex-flow: row;
+				width: 100%;
+				height: calc(100% - 60px);
+			}
+			.departmentList {
+				width: 30%;
+				height: 100%;
+				background-color: #FFFFFF;
+				position: relative;
+				z-index: 10;
+				overflow: scroll;
+				box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1)
+			}
+
+			.department li {
+				border-bottom: 1px solid #EEEEEE;
+				text-align: center;
+				padding:18px 5px;
+				font-size: 14px;
+			}
+
+			.departmentUser {
+				width: 70%;
+				height: 100%;
+				background-color: #FFFFFF;
+				min-height: 200px;
+
+			}
+			.departmentName_active{
+				background: rgba(244,67,54,0.1);
+				box-sizing: border-box;
+				border-left: 4px solid #E32416;
+			}
+			.listUser {
+				height: 100%;
+				overflow: scroll;
+			}
+			.userinfo{
+				display: flex;
+				flex-flow: row;
+				height: 70px;
+				align-items: center;
+				border-bottom: 1px solid #EEEEEE;
+			}
+			.user_avatar{
+				width: 50px;
+				height: 50px;
+				border-radius: 50%;
+				margin-left: 20px;
+			}
+			.user_box{
+				padding-left: 20px;
+			}
+			.user_name{
+				font-size: 14px;
+				margin-bottom: 5px;
+			}
+			.user_mobile{
+				font-size: 14px;
+				margin-top: 5px;
+				color: #666666
+			}
+		</style>
+	</head>
+
+	<body style="background-color: #F0F0F4;">
+		<div class="search">
+			<input type="text" name="" value="" placeholder="请输入关键字" id="search" />
+			<a id="cancel">搜索 </a>
+		</div>
+		<div id="" class="phoneBook">
+			<div class="departmentList">
+				<div class="listContent" >
+					<ul class="department" id="">
+
+					</ul>
+				</div>
+			</div>
+			<div class="departmentUser">
+				<ul class="listUser" id="" >
+
+				</ul>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/jquery.min.js"></script>
+	<script type="text/javascript" src="../script/public.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			api.addEventListener({
+			    name: 'login'
+			}, function(ret, err){
+			    window.location.href=window.location.href
+			});
+			var deptid=''
+			//			点击搜索按钮
+			$("#cancel").click(function() {
+				$("#cancel").css("display", "none")
+				$("#search").css("width", "100%")
+				$(".search").css("padding-right", "15px")
+				var searchName = $("#search").val()
+				// console.log(searchName)
+				getContacts(0,searchName);
+			})
+			//			点击输入框
+			$("#search").click(function() {
+				$("#cancel").css("display", "block")
+				$("#search").css("width", "80%")
+				$(".search").css("padding-right", "0px")
+			})
+			var department_list = '<li  class="departmentName ani" ></li>';
+			department_list = $(department_list);
+			//获取部门列表
+			$.get(host + "mobile/department/getdeptList", {}, function(res) {
+				getContacts(res.data[0].deptid)
+				res.data.forEach(function(value, index, array) {
+					var department = department_list.clone();
+					department.text(value.deptname)
+					department.attr("data-id", value.deptid)
+					if(index==0){
+						department.addClass("departmentName_active")
+					}
+					$(".department").append(department)
+
+				})
+			})
+			//获取部门用户 by 部门id
+			var user_list='<li class="user"> <div class="userinfo"> <img src="../image/noavatar_big.jpg" class="user_avatar" onerror="this.src=\'../image/noavatar_big.jpg\'"/> <div class="user_box"> <p class="user_name"> </p> <p class="user_mobile"></p></div></div></li>'
+			user_list = $(user_list);
+			function getContacts(id,name){
+				var values={};
+			    if(id)
+			    {
+			        values.deptid=id;
+			    }
+			    if(name)
+			    {
+			        values.search=name;
+			    }
+				$.get(host + "mobile/contacts/getContactsList", values, function(res) {
+//					console.log(JSON.stringify(res))
+					$(".listUser li").remove()
+					res.data.forEach(function(value, index, array){
+						var user = user_list.clone();
+						user.find(".user_avatar").attr("src",host_+value.avatar_small)
+						user.find(".user_name").text(value.realname)
+						user.find(".user_mobile").text(value.mobile)
+						$(".listUser").append(user)
+					})
+				})
+			};
+			$(".department").on("click",".departmentName",function(){
+				deptid=$(this).attr("data-id")
+				$(".departmentName").removeClass("departmentName_active")
+				$(this).addClass("departmentName_active")
+				getContacts(deptid,0)
+			})
+			$(".listUser").on("click",".user",function(){
+				var mobile=$(this).find('.user_mobile').text()
+				api.actionSheet({
+				    cancelTitle: '取消',
+				    cacancelColor:"#ffffff",
+				    buttons: ['拨打电话', '发送短信', ],
+				}, function(ret, err) {
+				    var index = ret.buttonIndex;
+				    if(index==1){
+				    	api.call({
+	                        type: 'tel_prompt',
+	                        number: mobile
+	                    });
+				    }else if(index==2){
+				    	api.sms({
+	                        numbers: [mobile],
+	                        text: ''
+	                   	});
+				    }
+				});
+			})
+
+		};
+	</script>
+
+</html>
